@@ -1,7 +1,21 @@
 # GRIP Tracking and QC System
 
-## REDCap
-### Project Strucure
+This repository contains an outline to set up qc_pipelines and walks through an example qc run on an example REDCap with fictitious participant data.
+
+| Table of Contents |
+|---|
+| Introduction |
+| REDCap Details |
+| Repository Contents |
+| Installation and Setup |
+| QC Steps |
+| Running a QC: Example |
+
+# Introduction
+See (main.py)[main_template.py] and (qc_pipelines.py)[qc_pipelines.py]. These scripts were developed using Python 1.13.1, but have been tested with (CODY + JULIA ADD).
+
+# REDCap Details
+## Project Strucure
 To buid out your own Qualtity Control System, see `ProjectStructureExample.REDCap.xml` for an example REDCap strucutre. You may import this structure as the base for your own REDCap projects used for GRIP tracking. This project structure has only one form ("Information Sheet") with fields described below:
 | Fieldname | Description | Example |
 |---|---|---|
@@ -9,37 +23,39 @@ To buid out your own Qualtity Control System, see `ProjectStructureExample.REDCa
 | date_dc | The date the data was captured (YYYY-MM-DD) | 2025-05-29 |
 | data_loc | The location where the data was collected. | remote |
 
-### REDCap Software Version
+## REDCap Software Version
 REDCap Software - Version 15.2.5 - © 2025 Vanderbilt University
 
-This repository contains an outline to set up qc_pipelines and walks through an example qc run on an example REDCap with fictitious participant data.
-
-
-Validate id type
-Change this to match your organization's idtypes. in this case, we are matching it to any two letters and 1-2 numbers, padding with zero if 1 digit.
-
 # Repository Contents
-Add tree here!
+This repository contains scripts to build and customize pipelines as well as sample data to follow along with the example presented below. 
+To familiarize yourself with this repository, consider exploring:
+    - (qc_pipelines.py)[qc_pipelines.py]: combines scripts by inputting them as nodes to pipelines to build out the strucutre of the qc
+    - (stream.py)[stream.py]: holds the Pipeline and Node class structures
+    - (logger.py)[logger.py]: handles the saving and logging of pipeline results
+    - (redcap.py)[redcap.py]: handles pulling and validating REDCap records
+    - (walk.py)[walk.py]: walk functions to collect files
+    - (compare_redcap.py)[compare_redcap.py]: functions to compare filename information to REDCap field data
+    - (write_flagged_excel.py)[write_flagged_excel.py]: writes excels for manual review
+    - (duplicates.py)[duplicates.py]: functions to check for duplicates or too many file occurences
+    - (destination.py)[destination.py]: functions to define destination of files that passed all checks
+    - (move.py)[move.py]: functions to move files
+    - (clean_dataset.py)[clean_dataset.py]: functions to compare to and update the clean dataset of all files that have passed the QC
 
-# Example Qualtity Control Pipeline
-## Script List
-- get_latest_data.py: holds scripts to access filepaths in the static.json or the config.json
-- neuro_dst.py: holds scripts to build the destination path
-- neuro_pipeline.py: holds the pipelines for each step of the QC
-- neuro_utilities.py: holds Neurology QC specific methods for matching patterns, reading data structures, and ignoring files
-- correct_redcap.py: holds scripts to make bulk updates to redcap fields
+To follow along with the example, use the files found in (redcap_example/)[redcap_example] to set up your REDCap Project.
 
-## Other Files Needed (not version controlled)
-- config.json: contains root filepaths
-- static.json: holds filepaths to the JSONs created and is automatically updated at the end of each pipeline
-
-## Setup
+# Installation and Setup
+## Script setup
 Install the requirements needed to run these scripts:
 ```sh
-pip install -r requirements.txt
+pip install -r py3-13-1_requirements.txt
 ```
 
-## QC Steps
+See (templates)[templates/] for the template files you should copy. Copy each one into your `qc_system` folder and rename by removing *template* from the filename. Fill in any filepaths, tokens, or URLs needed.
+
+## REDCap Setup
+Add here 
+
+# QC Steps
 ### Prepare comparison sources
 Our example only compares to REDCap, but you may wish to add additional nodes to compare with other data sources.
 1. Run `pull_comparison_sources()` from `main()`
@@ -131,3 +147,5 @@ If all of those checks pass, the we create a destination path for the file and a
 | src_dst_func | func | Get src and dst for move. | get_src_dst | Yes |
 | move_back | bool | Move from src to dst. It should be True to move back to the original location. | False | Yes |
 | clean_dataset | str | Filepath to the current clean dataset | No default | No |
+
+# Running a QC: Example

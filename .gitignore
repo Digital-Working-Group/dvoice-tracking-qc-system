@@ -2,7 +2,9 @@ __pycache__/
 save_log/
 flagged/
 provenance/
-*.json
+clean_dataset/
+config.json
+static.json
 *.xlsx
 read_token.py 
 main.py
