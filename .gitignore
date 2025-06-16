@@ -1,0 +1,8 @@
+__pycache__/
+save_log/
+flagged/
+provenance/
+*.json
+*.xlsx
+read_token.py 
+main.py
