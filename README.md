@@ -12,7 +12,7 @@ This repository contains an outline to set up qc_pipelines and walks through an 
 | Running a QC: Example |
 
 # Introduction
-See (main.py)[main_template.py] and (qc_pipelines.py)[qc_pipelines.py]. These scripts were developed using Python 1.13.1, but have been tested with (CODY + JULIA ADD).
+See [main_template.py](templates/main_template.py) and [qc_pipelines.py](templates/qc_pipelines.py). These scripts were developed using Python 1.13.1, but have been tested with (CODY + JULIA ADD).
 
 # REDCap Details
 ## Project Strucure
@@ -29,17 +29,17 @@ REDCap Software - Version 15.2.5 - © 2025 Vanderbilt University
 # Repository Contents
 This repository contains scripts to build and customize pipelines as well as sample data to follow along with the example presented below. 
 To familiarize yourself with this repository, consider exploring:
-    - (qc_pipelines.py)[qc_pipelines.py]: combines scripts by inputting them as nodes to pipelines to build out the strucutre of the qc
-    - (stream.py)[stream.py]: holds the Pipeline and Node class structures
-    - (logger.py)[logger.py]: handles the saving and logging of pipeline results
-    - (redcap.py)[redcap.py]: handles pulling and validating REDCap records
-    - (walk.py)[walk.py]: walk functions to collect files
-    - (compare_redcap.py)[compare_redcap.py]: functions to compare filename information to REDCap field data
-    - (write_flagged_excel.py)[write_flagged_excel.py]: writes excels for manual review
-    - (duplicates.py)[duplicates.py]: functions to check for duplicates or too many file occurences
-    - (destination.py)[destination.py]: functions to define destination of files that passed all checks
-    - (move.py)[move.py]: functions to move files
-    - (clean_dataset.py)[clean_dataset.py]: functions to compare to and update the clean dataset of all files that have passed the QC
+    - [qc_pipelines.py](qc_scripts/qc_pipelines.py): combines scripts by inputting them as nodes to pipelines to build out the strucutre of the qc
+    - [stream.py](qc_scripts/stream.py): holds the Pipeline and Node class structures
+    - [logger.py](qc_scripts/logger.py): handles the saving and logging of pipeline results
+    - [redcap.py](qc_scripts/redcap.py): handles pulling and validating REDCap records
+    - [walk.py](qc_scripts/walk.py): walk functions to collect files
+    - [compare_redcap.py](qc_scripts/compare_redcap.py): functions to compare filename information to REDCap field data
+    - [write_flagged_excel.py](qc_scripts/write_flagged_excel.py): writes excels for manual review
+    - [duplicates.py](qc_scripts/duplicates.py): functions to check for duplicates or too many file occurences
+    - [destination.py](qc_scripts/destination.py): functions to define destination of files that passed all checks
+    - [move.py](qc_scripts/move.py): functions to move files
+    - [clean_dataset.py](qc_scripts/clean_dataset.py): functions to compare to and update the clean dataset of all files that have passed the QC
 
 To follow along with the example, use the files found in (redcap_example/)[redcap_example] to set up your REDCap Project.
 
