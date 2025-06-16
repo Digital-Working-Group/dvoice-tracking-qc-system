@@ -4,19 +4,19 @@ This repository contains an outline to set up qc_pipelines and walks through an 
 
 | Table of Contents |
 |---|
-| Introduction |
-| REDCap Details |
-| Repository Contents |
-| Installation and Setup |
-| QC Steps |
-| Running a QC: Example |
+| [Introduction](#introduction) |
+| [REDCap Details](#redcap-details) |
+| [Repository Contents](#repository-contents) |
+| [Installation and Setup](#installation-and-setup) |
+| [QC Steps](#qc-steps) |
+| [Running a QC: Example](#running-a-qc-example) |
 
 # Introduction
 See [main_template.py](templates/main_template.py) and [qc_pipelines.py](templates/qc_pipelines.py). These scripts were developed using Python 1.13.1, but have been tested with (CODY + JULIA ADD).
 
 # REDCap Details
 ## Project Strucure
-To buid out your own Qualtity Control System, see `ProjectStructureExample.REDCap.xml` for an example REDCap strucutre. You may import this structure as the base for your own REDCap projects used for GRIP tracking. This project structure has only one form ("Information Sheet") with fields described below:
+To buid out your own Qualtity Control System, see [ProjectStructureExample.REDCap.xml](redcap_example/ProjectStructureExample.REDCap.xml) for an example REDCap strucutre. You may import this structure as the base for your own REDCap projects used for GRIP tracking. This project structure has only one form ("Information Sheet") with fields described below:
 | Fieldname | Description | Example |
 |---|---|---|
 | record_id | Record ID for that data. For our testing, we chose the format Cohort Code (two letters and two numbers) and Participant ID (five numbers). All record ids are samples only. | AB0012345 |
@@ -29,6 +29,7 @@ REDCap Software - Version 15.2.5 - © 2025 Vanderbilt University
 # Repository Contents
 This repository contains scripts to build and customize pipelines as well as sample data to follow along with the example presented below. 
 To familiarize yourself with this repository, consider exploring:
+
     - [qc_pipelines.py](qc_scripts/qc_pipelines.py): combines scripts by inputting them as nodes to pipelines to build out the strucutre of the qc
     - [stream.py](qc_scripts/stream.py): holds the Pipeline and Node class structures
     - [logger.py](qc_scripts/logger.py): handles the saving and logging of pipeline results
@@ -41,7 +42,7 @@ To familiarize yourself with this repository, consider exploring:
     - [move.py](qc_scripts/move.py): functions to move files
     - [clean_dataset.py](qc_scripts/clean_dataset.py): functions to compare to and update the clean dataset of all files that have passed the QC
 
-To follow along with the example, use the files found in (redcap_example/)[redcap_example] to set up your REDCap Project.
+To follow along with the example, use the files found in [redcap_example](redcap_example/) to set up your REDCap Project.
 
 # Installation and Setup
 ## Script setup
@@ -50,7 +51,7 @@ Install the requirements needed to run these scripts:
 pip install -r py3-13-1_requirements.txt
 ```
 
-See (templates)[templates/] for the template files you should copy. Copy each one into your `qc_system` folder and rename by removing *template* from the filename. Fill in any filepaths, tokens, or URLs needed.
+See [templates](templates/) for the template files you should copy. Copy each one into your `qc_system` folder and rename by removing *template* from the filename. Fill in any filepaths, tokens, or URLs needed.
 
 ## REDCap Setup
 Add here 

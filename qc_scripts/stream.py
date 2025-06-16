@@ -8,6 +8,9 @@ from collections import defaultdict
 from qc_scripts.logger import Logger
 
 class Pipeline:
+    """
+    String together functions within Nodes to run together
+    """
     def __init__(self, name, logger=Logger()):
         self.name = name
         self.nodes = []
@@ -43,7 +46,7 @@ class Pipeline:
     def run(self):
         """Run the pipeline by passing data through each node sequentially."""
         self.start_time = datetime.now()
-        for i, node in enumerate(self.nodes):
+        for _, node in enumerate(self.nodes):
             update_state = node.process(self.state)
             self.state.update(update_state)
         self.end_time = datetime.now()

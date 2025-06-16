@@ -8,7 +8,7 @@ from qc_scripts.utility.dates import get_date_string
 from qc_scripts.utility.id_validation import get_pid
 from qc_scripts.utility.errors import on_error
 
-def default_make_kv(__, data, **make_kv_kw):
+def default_make_kv(__, data, **_):
     """
     default kv for walk
     """ 
@@ -35,7 +35,7 @@ def match_filename_format(_, data, **kwargs):
         id_date = f"{pid}_{date}"
         value.update({'pid': pid, 'id_date': id_date, 'date': date, 'src': full_path})
         return id_date, value
-    except ValueError as error:
+    except ValueError:
         return None, ('invalid_date', full_path)
     
 

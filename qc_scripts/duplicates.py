@@ -1,13 +1,11 @@
 """
-duplicates.py: methods for dealing with duplicate data
+duplicates.py
+Methods for dealing with duplicate data
 """
 import os
-import csv
 import filecmp 
-import pprint
-from tqdm import tqdm
-from datetime import datetime
 from itertools import combinations
+from tqdm import tqdm
 
 def flag_file_count(input_data, **kwargs):
     """
@@ -36,13 +34,16 @@ def are_duplicates(file1, file2, shallow=True):
     return filecmp.cmp(file1_path, file2_path, shallow)
 
 def check_file_extension(file1, file2):
+    """
+    Checks if files have the same extention
+    """
     ext1 = os.path.splitext(file1)[1].lower()
     ext2 = os.path.splitext(file2)[1].lower()
     return ext1 == ext2
 
 def clean_duplicates(input_data, **kwargs):
     """
-    method to be added to pipeline
+    Method to be added to pipeline
     """
     ## get_kwargs
     duplicate_root = kwargs.get('duplicate_root', '')

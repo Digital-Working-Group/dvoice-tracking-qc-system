@@ -1,9 +1,7 @@
 """
-example_qc_helpers.py
-
-Helper and utility methods specific to the the example qc REDCap and qc_system repo
+pattern.py
+Holds scripts defining patterns 
 """
-import os
 
 def example_pattern_data(): 
     """

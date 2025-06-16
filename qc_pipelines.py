@@ -3,14 +3,10 @@ qc_pipelines.py
 Holds pipeline scripts for each step of the example QC
 """
 from datetime import date
+from read_token import read_token
+from qc_scripts.utility.pattern import example_pattern_data
 from qc_scripts.walk import qc_walk
 from qc_scripts.stream import Pipeline, SourceNode, FilterNode, ActionNode
-from example_qc_helpers import example_pattern_data
-from qc_scripts.utility.read import read_dictionary_file
-from qc_scripts.utility import get_latest_data as gld
-from qc_scripts.walk import match_filename_format
-from read_token import read_token
-from qc_scripts.utility.process_record import process_record
 from qc_scripts.redcap import pull_redcap, validate_redcap_entries
 from qc_scripts.compare_redcap import flag_id_date, flag_tester_id, check_location
 from qc_scripts.write_flagged_excel import write_flagged_excel
@@ -18,12 +14,15 @@ from qc_scripts.duplicates import clean_duplicates, flag_file_count
 from qc_scripts.destination import get_dst, get_src_dst
 from qc_scripts.move import move_files
 from qc_scripts.clean_dataset import update_clean_dataset
+from qc_scripts.utility.read import read_dictionary_file
+from qc_scripts.utility import get_latest_data as gld
+from qc_scripts.utility.process_record import process_record
+from qc_scripts.walk import match_filename_format
 
 def pull_comparison_sources():
     """
-    Pull and formats data from the example REDCap
-
-    If an additional schedule record is kept my your team, you could add the intake and processing of that record here.
+    Pulls and formats data from the example REDCap
+    Validates idtype and id and checks that required fields have been filled out.
     """
     rc_kwargs = {
         'fields_list': ['record_id',
@@ -46,6 +45,9 @@ def pull_comparison_sources():
     ).run()
 
 def walk():
+    """
+    Walks files in given root and separates by passed, pattern mismatch, and wrong extention
+    """
 
     kwargs = {
         'pattern_list': example_pattern_data(),
@@ -62,10 +64,13 @@ def walk():
 
 def compare_sources_and_duplicates():
     """
-    Includes everything before the first breakpoint;
-        - compare id_dates to redcap 
-        - compare tech_ids to redcap
-    Breaks to write excels for our review or RA review
+    Contains all data filters:
+        - Compares id_date to REDCap
+        - Compares tester_id to REDCap
+        - Checks for duplicates
+        - Checks for too many file occurences 
+        - Compares location to REDCap
+        - Writes file destination path
     """
     redcap_entries = read_dictionary_file(gld.get_filepath('pull_sources_pipeline_redcap_records'))
 
@@ -99,6 +104,10 @@ def compare_sources_and_duplicates():
     ).run()
 
 def move_and_update():
+    """
+    Moves files to their destinations
+    Updates the clean dataset with the files moved
+    """
     kwargs = {
         'src_dst_func': get_src_dst,
         'move_back': True,
@@ -110,4 +119,3 @@ def move_and_update():
      .add_node(ActionNode(func=move_files, input_keys=['flag_pipeline_passed'], **kwargs))
      .add_node(ActionNode(func=update_clean_dataset, input_keys=['flag_pipeline_passed'], **kwargs))
     ).run()
-    

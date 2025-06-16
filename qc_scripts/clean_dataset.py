@@ -26,7 +26,6 @@ def update_clean_dataset(input_data, **kwargs):
     Takes in final result from the pipeline and adds it to the clean dataset
     """
     ## kwargs
-    media_types = kwargs.get('media_types', [])
     clean_dataset = kwargs.get('clean_dataset')
 
     ## Take in a filepath or data
@@ -54,6 +53,6 @@ def update_clean_dataset(input_data, **kwargs):
                 updated_clean[id_date]= deduplicate_by_src(updated_clean[id_date])
     
     ## Write over old clean dataset
-    with open(clean_dataset, 'w') as f:
+    with open(clean_dataset, 'w', encoding='utf-8') as f:
         json.dump(updated_clean, f, indent=4)
     print(f'See {clean_dataset} for updated clean dataset.')

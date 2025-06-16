@@ -1,6 +1,10 @@
+"""
+compare_redcap.py
+Methods for comparing file data to REDCap records
+"""
 from datetime import datetime
-from tqdm import tqdm
 from collections import defaultdict
+from tqdm import tqdm
 from qc_scripts.utility.read import read_dictionary_file
 
 def flag_id_date(input_data, **kwargs):
@@ -53,7 +57,7 @@ def flag_id_date(input_data, **kwargs):
                                 idd_date = datetime.strptime(idd.split('_')[-1], "%Y%m%d").date()
                                 difference = abs((idd_date - date_of_file).days)
                             except ValueError:
-                                differnece = 'Error'
+                                difference = 'Error'
                             ra = redcap_entries[idd][rc_tester_id_fieldname]
                             date = redcap_entries[idd][rc_date_fieldname].replace('-', '')
                             nearest.append({'id_date': idd, 'date': date, 'difference': difference, 'tester_id_completing': ra})

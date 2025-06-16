@@ -19,16 +19,21 @@ def edit_static_json(static_path, log_path, ext):
         """
         static = read_dictionary_file(static_path)
         static[ext] = log_path
-        with open(static_path, 'w') as fp:
+        with open(static_path, 'w', encoding="utf-8") as fp:
             json.dump(static, fp, indent=4)
 
 def custom_serializer(obj):
+    """
+    Serializer: objects replaces by their name for logging
+    """
     if isinstance(obj, types.FunctionType):
         return obj.__name__  
     return str(obj)
 
 class Logger:
-    """Handles logging QC step results to JSON files."""
+    """
+    Handles logging QC step results to JSON files.
+    """
     
     def __init__(self, base_dir="save_log", static_path="static.json"):
         # Ensure log directory exists
@@ -69,12 +74,12 @@ class Logger:
 
 
             # Save data to JSON file
-            with open(filename, 'w') as f:
+            with open(filename, "w", encoding="utf-8") as f:
                 json.dump(data, f, default=custom_serializer, indent=4)
 
             print(f"Saved log: {filename}")
             files.append(filename)
-            edit_static_json(self.static_path, filename, f'{pipeline_name}_{ext}')
+            edit_static_json(self.static_path, filename, f"{pipeline_name}_{ext}")
 
         return files 
 
@@ -121,7 +126,7 @@ class Logger:
             prov_dict = {}
         prov_dict[len(prov_dict)] = prov_data
 
-        with open(prov_file, 'w') as f:
+        with open(prov_file, "w", encoding="utf-8") as f:
             json.dump(prov_dict, f, default=custom_serializer, indent=4)
         if do_print:
             pprint_dict(prov_data, default=custom_serializer, indent=4)

@@ -3,27 +3,40 @@ methods for writing an excel file
 """
 import os
 import copy
-import pandas as pd
 from datetime import datetime
+import pandas as pd
 from qc_scripts.utility.read import read_dictionary_file
 
+def flatten_dict(dictionary, parent_key='', sep='_'):
+    """
+    Recursively flattens a nested dictionary, including lists of dicts.
+    """
+    items = []
+    for key, value in dictionary.items():
+        new_key = f"{parent_key}{sep}{key}" if parent_key else key
+        if isinstance(value, dict):
+            items.extend(flatten_dict(value, new_key, sep=sep).items())
+        elif isinstance(value, list):
+            for i, item in enumerate(value):
+                if isinstance(item, dict):
+                    items.extend(flatten_dict(item, f"{new_key}{sep}{i}", sep=sep).items())
+                else:
+                    items.append((f"{new_key}{sep}{i}", item))
+        else:
+            items.append((new_key, value))
+    return dict(items)
+
 def flattened_to_df(input_data):
-    flatten_data = {}
+    """
+    Flattens a nested dictionary or a dict with lists of dicts into a DataFrame.
+    """
     data_dict = copy.deepcopy(input_data)
-    for key, value1 in data_dict.items():
-        if isinstance(value1, dict):
-            flatten_data[key] = value1
-        elif isinstance(value1, list) and all(isinstance(i, dict) for i in value1):
-            for item in value1:
-                for key2, val in item.items():
-                    if isinstance(val, list):
-                        for idx, subitem in enumerate(val):
-                            if isinstance(subitem, dict):
-                                for key3, item3 in subitem.items():
-                                    item[f'{key2}_{key3}_{idx}'] = item3
-                        break
-                flatten_data[key] = item
-    return pd.DataFrame.from_dict(flatten_data, orient='index')
+    flat_data = {}
+
+    for key, val in data_dict.items():
+        flat_data[key] = flatten_dict(val)
+
+    return pd.DataFrame.from_dict(flat_data, orient='index')
 
 def autofit_column_width(writer, sheetname, df, extra_space=2, startcol=0):
     """

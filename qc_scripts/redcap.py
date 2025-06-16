@@ -46,7 +46,7 @@ def pull_redcap(**kwargs):
     settings = kwargs.get('settings', {})
 
     data = get_data_request(token, fields_list)
-    r = requests.post(redcap_url, data=data).json()
+    r = requests.post(redcap_url, data=data, timeout=10).json()
     process = settings['process']
     return [{'final': process(r), 'ext': ext}]
 
@@ -55,7 +55,7 @@ def validate_redcap_entries(input_data, **kwargs):
     Checks that id/idtypes match the schema and that the required fields are filled out
     """
     required_fieldnames = kwargs.get('required_fieldnames', [])
-    
+
     if isinstance(input_data, str):
         input_data = read_dictionary_file(input_data)
     

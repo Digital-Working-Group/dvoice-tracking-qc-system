@@ -2,7 +2,6 @@
 move.py: move functions for files
 """
 import os
-from datetime import datetime
 import qc_scripts.utility.move_commands as mf
 from qc_scripts.utility.read import read_dictionary_file
 
@@ -10,8 +9,6 @@ def move_files(input_data, **kwargs):
     """
     moving  files to their destinations
     """
-    start_time = datetime.now()
-
     ## get kwargs
     move_back = kwargs.get('move_back', False)
     move_function_kw = kwargs.get('move_function_kw', {})
