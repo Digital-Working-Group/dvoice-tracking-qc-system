@@ -7,23 +7,21 @@ from datetime import datetime
 import pandas as pd
 from qc_scripts.utility.read import read_dictionary_file
 
-def flatten_dict(dictionary, parent_key='', sep='_'):
+def flatten(item, parent_key='', sep='_'):
     """
-    Recursively flattens a nested dictionary, including lists of dicts.
+    Recursively flattens a structure of dicts and lists of dicts.
     """
     items = []
-    for key, value in dictionary.items():
-        new_key = f"{parent_key}{sep}{key}" if parent_key else key
-        if isinstance(value, dict):
-            items.extend(flatten_dict(value, new_key, sep=sep).items())
-        elif isinstance(value, list):
-            for i, item in enumerate(value):
-                if isinstance(item, dict):
-                    items.extend(flatten_dict(item, f"{new_key}{sep}{i}", sep=sep).items())
-                else:
-                    items.append((f"{new_key}{sep}{i}", item))
-        else:
-            items.append((new_key, value))
+    if isinstance(item, dict):
+        for k, v in item.items():
+            new_key = f"{parent_key}{sep}{k}" if parent_key else k
+            items.extend(flatten(v, new_key, sep=sep).items())
+    elif isinstance(item, list):
+        for i, v in enumerate(item):
+            new_key = f"{parent_key}{sep}{i}" if parent_key else str(i)
+            items.extend(flatten(v, new_key, sep=sep).items())
+    else:
+        items.append((parent_key, item))
     return dict(items)
 
 def flattened_to_df(input_data):
@@ -34,7 +32,7 @@ def flattened_to_df(input_data):
     flat_data = {}
 
     for key, val in data_dict.items():
-        flat_data[key] = flatten_dict(val)
+         flat_data[key] = flatten(val)
 
     return pd.DataFrame.from_dict(flat_data, orient='index')
 

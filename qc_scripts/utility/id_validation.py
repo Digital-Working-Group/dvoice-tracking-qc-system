@@ -68,28 +68,3 @@ def redcap_to_pid(redcap_id):
 
     return None
 
-"""
-import re
-
-# Allowed digits for ID-type
-VALID_TYPE_DIGITS = {'1', '2', '3', '01', '02', '03', '12'}
-
-def parse_id_string(s):
-    # Try 5-digit ID first
-    match = re.fullmatch(r'^([A-Za-z]{2})(\d{1,2})(\d{5})$', s)
-    if match:
-        letters, type_digits, id_number = match.groups()
-        if type_digits in VALID_TYPE_DIGITS:
-            id_type = letters + type_digits.zfill(2)
-            return id_type, id_number
-
-    # Try 4-digit ID
-    match = re.fullmatch(r'^([A-Za-z]{2})(\d{1,2})(\d{4})$', s)
-    if match:
-        letters, type_digits, id_number = match.groups()
-        if type_digits in VALID_TYPE_DIGITS:
-            id_type = letters + type_digits.zfill(2)
-            return id_type, id_number
-
-    return None  # Invalid string
-"""

@@ -11,7 +11,7 @@ def get_date_string(date_input, date_format=None):
     """
     if isinstance(date_input, datetime):
         return date_input.strftime('%Y%m%d')
-    elif isinstance(date_input, str):
+    if isinstance(date_input, str):
         try:
             if date_format:
                 dt = datetime.strptime(date_input, date_format)
