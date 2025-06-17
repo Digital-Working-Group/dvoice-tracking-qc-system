@@ -6,7 +6,7 @@ import getpass
 from pathlib import Path
 from datetime import datetime
 from qc_scripts.utility.get_latest_data import get_root_fp
-from qc_scripts.utility.git import get_git_info_from_caller_script, get_git_info_from_node
+from qc_scripts.utility.git import get_pipeline_origin_path, get_git_info_from_node
 from qc_scripts.utility.print import pprint_dict
 from qc_scripts.utility.read import read_dictionary_file
 from qc_scripts.utility.edit_string import append_to_end
@@ -102,7 +102,7 @@ class Logger:
                         'nodes': []
         }
         ## Get commit hash and github path 
-        prov_data.update(get_git_info_from_caller_script(abstraction_repo_name='qc_utility'))
+        prov_data.update(get_pipeline_origin_path())
 
         ## Get node info
         for node in pipeline_obj.nodes:

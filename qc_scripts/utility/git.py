@@ -48,6 +48,18 @@ def get_git_info_from_path(path: Path):
         "remote_url": remote_url,
     }
 
+def get_pipeline_origin_path(exclude_dir="qc_scripts"):
+    """
+    Used for Pipelines if the pipeline is in the same repo other scripts (git, logger, stream)
+    Traverses the call stack to find the first file that is not main and is not in qc_scripts, 
+    then uses GitPython to extract git info from that file's repository.
+    """
+    for frame_info in reversed(inspect.stack()):
+        filepath = Path(frame_info.filename).resolve()
+        if exclude_dir not in filepath.parts and "main.py" != filepath.name:
+            return get_git_info_from_path(filepath)
+    return {"error": "No caller found outside qc_scripts folder"}
+
 def get_git_info_from_caller_script(abstraction_repo_name="qc_utility"):
     """
     Used for Pipelines
@@ -60,7 +72,6 @@ def get_git_info_from_caller_script(abstraction_repo_name="qc_utility"):
 
         if abstraction_repo_name not in str(file_path):
             # Found the first frame outside of the abstraction repo
-            from .git import get_git_info_from_path
             return get_git_info_from_path(file_path)
 
     return {"error": "No caller found outside abstraction repo"}
