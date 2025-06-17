@@ -7,16 +7,18 @@ This repository contains an outline to set up qc_pipelines and walks through an 
 | [Introduction](#introduction) |
 | [REDCap Details](#redcap-details) |
 | [Repository Contents](#repository-contents) |
+| [Provenance and Logging](#provenance-and-logging) |
 | [Installation and Setup](#installation-and-setup) |
 | [QC Steps](#qc-steps) |
 | [Usage Example](#usage-example) |
+| [Citations](#citations) |
 
 # Introduction
 See [main_template.py](templates/main_template.py) and [qc_pipelines.py](templates/qc_pipelines.py). These scripts were developed using Python 1.13.1, but have been tested with (CODY + JULIA ADD).
 
 # REDCap Details
-## Project Strucure
-To buid out your own Qualtity Control System, see [ProjectStructureExample.REDCap.xml](redcap_example/ProjectStructureExample.REDCap.xml) for an example REDCap strucutre. You may import this structure as the base for your own REDCap projects used for GRIP tracking. This project structure has only one form ("Information Sheet") with fields described below:
+## Project Structure
+To build out your own Quality Control System, see [ProjectStructureExample.REDCap.xml](redcap_example/ProjectStructureExample.REDCap.xml) for an example REDCap structure. You may import this structure as the base for your own REDCap projects used for GRIP tracking. This project structure has only one form ("Information Sheet") with fields described below:
 | Fieldname | Description | Example |
 |---|---|---|
 | record_id | Record ID for that data. For our testing, we chose the format Cohort Code (two letters and two numbers) and Participant ID (five numbers). All record ids are samples only. | AB0012345 |
@@ -31,19 +33,36 @@ This repository contains scripts to build and customize pipelines as well as sam
 To familiarize yourself with this repository, consider exploring:
 
 
-- [qc_pipelines.py](qc_scripts/qc_pipelines.py): combines scripts by inputting them as nodes to pipelines to build out the strucutre of the qc
+- [qc_pipelines.py](qc_scripts/qc_pipelines.py): combines scripts by inputting them as nodes to pipelines to build out the structure of the qc
 - [stream.py](qc_scripts/stream.py): holds the Pipeline and Node class structures
 - [logger.py](qc_scripts/logger.py): handles the saving and logging of pipeline results
 - [redcap.py](qc_scripts/redcap.py): handles pulling and validating REDCap records
 - [walk.py](qc_scripts/walk.py): walk functions to collect files
 - [compare_redcap.py](qc_scripts/compare_redcap.py): functions to compare filename information to REDCap field data
 - [write_flagged_excel.py](qc_scripts/write_flagged_excel.py): writes excels for manual review
-- [duplicates.py](qc_scripts/duplicates.py): functions to check for duplicates or too many file occurences
+- [duplicates.py](qc_scripts/duplicates.py): functions to check for duplicates or too many file occurrences
 - [destination.py](qc_scripts/destination.py): functions to define destination of files that passed all checks
 - [move.py](qc_scripts/move.py): functions to move files
 - [clean_dataset.py](qc_scripts/clean_dataset.py): functions to compare to and update the clean dataset of all files that have passed the QC
 
 To follow along with the example, use the files found in [redcap_example](redcap_example/) to set up your REDCap Project.
+
+# Provenance and Logging
+
+This repository handles logging using a provenance schema, based loosely off of the [Radifox](https://github.com/jh-mipc/radifox), which provides an example of provenance applied to imaging. You may edit the log contents by modifying the provenance dictionaries created in [logger.log_pipeline()](qc_scripts/logger.py) and [logger.log_node()](qc_scripts/logger.py). Our current implementation captures the following:
+    - Pipeline Data:
+        - Pipeline name
+        - Start time
+        - Duration
+        - Pipeline function name
+        - Pipeline input
+        - Nodes
+    - Node Data:
+        - Node name
+        - Start time
+        - Duration
+        - Node function name
+        - Node inputs (kwargs)
 
 # Installation and Setup
 ## Script setup
@@ -94,7 +113,7 @@ This step walks over a predefined folder and outputs JSONs to describe files fou
 | walk_kwargs | dict | Any additional walk kwargs. | {} | Yes |
 
 ### Compare sources and duplicates
-This step filters based on some example critera to ensure that the filenames match the data recorded on REDCap and that there are no extra or duplicate files. The specific steps used in this example inclue:
+This step filters based on some example criteria to ensure that the filenames match the data recorded on REDCap and that there are no extra or duplicate files. The specific steps used in this example include:
     - Checking that the id_date exists on REDCap.
     - Checking that the tester_id matches the one recorded on REDCap.
     - Checking that no duplicate files exist.
@@ -187,16 +206,24 @@ Note that all resulting JSONs are reference by their key in `static.json` as ind
 ### Pull REDCap Data
 1. Ensure that you have edited your `read_token.py` file to read in your REDCap API token.
 2. In your `config.json`, update your `redcap_url` key to hold your REDCap API URL.
-3. In your `main.py`, uncomment `pull_comparison_sources()` and run.
+3. Run the following commands:
+```python
+from main import pipeline_pull_compare_sources
+pipeline_pull_compare_sources()
+```
     - This will result in two files:
         - `pull_sources_pipeline_redcap_records`: All records pulled from REDCap
         - `pull_sources_pipeline_fix_redcap`: Entries that need to be reviewed and corrected on REDCap. Our sample data should flag the record_id DC265 and DC0212432.
 
 ### Walk Sample Data
-1. In your `main.py`, uncomment `walk()` and run.
+1. Run the following commands:
+```python
+from main import pipeline_walk
+pipeline_walk()
+```
     - This will result in two files:
         - `walk_pipeline_walk`: Files that were found and passed checks.
-        - `walk_pipeline_other_walk`: Files containing an unwanted extention or that did not match the filename pattern provided. Our sample data will flag the following files:
+        - `walk_pipeline_other_walk`: Files containing an unwanted extension or that did not match the filename pattern provided. Our sample data will flag the following files:
             - "sample_data/flac/BL01_06800_20250508_115_remote_bad_extension.flac"
             - "sample_data/m4a/BL00-13234_20241217_112_remote.m4a"
             - "sample_data/mp3/DC0312566.mp3"
@@ -205,10 +232,14 @@ Note that all resulting JSONs are reference by their key in `static.json` as ind
 
 ### Compare filename and REDCap data, flag duplicates
 1. In [qc_pipelines.compare_sources_and_duplicates](qc_pipelines.py), update the `record_end_date` in `kwargs` to be your desired end date. For our tests, we used (2025, 4, 30).
-2. In your `main.py`, uncomment `compare_sources_and_duplicates()` and run.
+2. Run the following commands:
+```python
+from main import pipeline_compare_sources_and_duplicates
+pipeline_compare_sources_and_duplicates()
+```
     - This will result in 7 files:
         - `flag_pipeline_passed`: Files that passed all checks.
-        - `flag_pipeline_flagged_not_in_date_range_example`: Filename date occured after the record_end_date.
+        - `flag_pipeline_flagged_not_in_date_range_example`: Filename date occurred after the record_end_date.
             - Our sample data will flag DC02-61041_20250507 and BL01-06800_20251015.
         - `flag_pipeline_flagged_no_redcap_entry_example`: Filename id_date did not match those found in the REDCap records.
             - Also see [flagged/no_redcap_entry](flagged/no_redcap_entry/) for an Excel summary.
@@ -225,7 +256,11 @@ Note that all resulting JSONs are reference by their key in `static.json` as ind
 
 ### Move and Update the Clean Dataset
 1. In [qc_pipelines.move_and_update](qc_pipelines.py), ensure that `move_back` in `kwargs` is set to be `False`.
-2. In your `main.py`, uncomment `move_and_update()` and run.
+2. Run the following commands:
+```python
+from main import pipeline_move_and_update
+pipeline_move_and_update()
+```
      - This should move all passed files from the previous step into organized folders within `passed_data/`.
      - You may check and see that the clean dataset found in `passed_data/clean_dataset/` has also been updated with the moved data.
 
@@ -237,5 +272,19 @@ Note that all resulting JSONs are reference by their key in `static.json` as ind
   booktitle = {Proceedings of the 12th Conference on Language Resources and Evaluation (LREC 2020)},
   pages = {4211--4215},
   year = 2020
+}
+
+@electronic{FHS-BAP-Data-Core:2025,
+ author = {FHS-BAP Data Core Team},
+ title = {Framingham Heart Study Brain Aging Program (FHS-BAP) Data Core},
+ url = {https://fhsbap.bu.edu/},
+ urldate = {17.06.2024}
+}
+
+@electronic{GRIP-Research:2025,
+ author = {Global Research Platforms, LLC},
+ title = {GRIP Global Research and Imaging Platform},
+ url = {https://www.grip-research.org/},
+ urldate = {17.06.2024}
 }
 ```

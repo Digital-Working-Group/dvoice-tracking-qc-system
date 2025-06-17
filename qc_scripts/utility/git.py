@@ -42,7 +42,6 @@ def get_git_info_from_path(path: Path):
         remote_url = "no remote"
 
     return {
-        "repo_root": str(repo_root),
         "script_path_in_repo": str(path.relative_to(repo_root)),
         "commit_hash": commit_hash,
         "remote_url": remote_url,

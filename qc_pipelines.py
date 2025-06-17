@@ -54,7 +54,7 @@ def walk():
         'make_kv': match_filename_format,
         'roots': ["sample_data/"],
         'ignore_list': [],
-        'keep_exts': ('wav', 'm4a'),
+        'keep_exts': ('wav', 'm4a', 'mp3'),
         'walk_kwargs': {'multiple_values': True, 'ext': 'walk'}
     }
 
@@ -110,7 +110,7 @@ def move_and_update():
     """
     kwargs = {
         'src_dst_func': get_src_dst,
-        'move_back': True,
+        'move_back': False,
         'clean_dataset': gld.get_filepath('clean_dataset')
         }
 
