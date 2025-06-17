@@ -23,6 +23,7 @@ To build out your own Quality Control System, see [ProjectStructureExample.REDCa
 |---|---|---|
 | record_id | Record ID for that data. For our testing, we chose the format Cohort Code (two letters and two numbers) and Participant ID (five numbers). All record ids are samples only. | AB0012345 |
 | date_dc | The date the data was captured (YYYY-MM-DD) | 2025-05-29 |
+| tester_id | ID of the tester. | 123 |
 | data_loc | The location where the data was collected. | remote |
 
 ## REDCap Software Version
