@@ -65,6 +65,62 @@ This repository handles logging using a provenance schema, based loosely off of 
         - Node function name
         - Node inputs (kwargs)
 
+Example provenance output:
+```json
+{
+    "0": {
+        "pipeline_name": "pull_sources_pipeline",
+        "start_time": "2025-06-24 15:01:35.084237",
+        "duration": "0:00:00.473617",
+        "func_name": "pull_comparison_sources",
+        "pipeline_input": {},
+        "nodes": [
+            {
+                "node_name": "pull_redcap",
+                "start_time": "2025-06-24 15:01:35.084237",
+                "duration": "0:00:00.472617",
+                "node_func": "<function pull_redcap at 0x0000023632BA0720>",
+                "node_inputs": {
+                    "fields_list": [
+                        "record_id",
+                        "date_dc",
+                        "tester_id",
+                        "data_loc",
+                        "information_sheet_complete"
+                    ],
+                    "token": "read_token",
+                    "settings": {
+                        "process": "process_record"
+                    },
+                    "redcap_url": "https://redcap.bumc.bu.edu/api/"
+                },
+                "script_path_in_repo": "qc_scripts\\redcap.py",
+                "commit_hash": "8c8113bf3d8f544f7c04bcb9b352b64d919e1ed9",
+                "remote_url": "https://github.com/Digital-Working-Group/qc_system.git"
+            },
+            {
+                "node_name": "validate_redcap_entries",
+                "start_time": "2025-06-24 15:01:35.556854",
+                "duration": "0:00:00.001000",
+                "node_func": "<function validate_redcap_entries at 0x0000023634C36F20>",
+                "node_inputs": {
+                    "required_fieldnames": [
+                        "date_dc",
+                        "data_loc"
+                    ]
+                },
+                "script_path_in_repo": "qc_scripts\\redcap.py",
+                "commit_hash": "8c8113bf3d8f544f7c04bcb9b352b64d919e1ed9",
+                "remote_url": "https://github.com/Digital-Working-Group/qc_system.git"
+            }
+        ],
+        "script_path_in_repo": "qc_pipelines.py",
+        "commit_hash": "8c8113bf3d8f544f7c04bcb9b352b64d919e1ed9",
+        "remote_url": "https://github.com/Digital-Working-Group/qc_system.git"
+    }
+}
+```
+
 # Installation and Setup
 ## Script setup
 Install the requirements needed to run these scripts:
@@ -74,10 +130,50 @@ pip install -r py3-13-1_requirements.txt
 
 See [templates](templates/) for the template files you should copy. Copy each one into your `qc_system` folder and rename by removing *template* from the filename. Fill in any filepaths, tokens, or URLs needed.
 
+static.json should start looking like this:
+```json
+{
+    "clean_dataset": "passed_data\\clean_dataset\\clean_dataset.json",
+    "walk_pipeline_walk": "",
+    "walk_pipeline_other_walk": "",
+    "pull_sources_pipeline_redcap_records": "",
+    "flag_pipeline_passed": "",
+    "flag_pipeline_flagged_no_redcap_entry_example": "",
+    "flag_pipeline_flagged_not_in_date_range_example": "",
+    "flag_pipeline_extra_files": "",
+    "flag_pipeline_duplicates": "",
+    "flag_pipeline_location_mismatch": "",
+    "flag_pipeline_flagged_tester_id_mismatch_example": "",
+    "flag_pipeline_flagged_tester_id_no_redcap_example": "",
+    "move_pipeline_move": "",
+    "move_pipeline_move_move_back": "",
+    "pull_sources_pipeline_fix_redcap": ""
+}
+```
+
+config.json should contain the following, with the values filled out:
+```json
+{
+    "prov_root": "provenance",
+    "redcap_url": "YOUR_REDCAP_URL"
+}
+```
+
 ## REDCap Setup
 1. Select **New Project**
 2. Under **Project creation option** select *upload a REDCap project XML file*. If you would like to use our structure but create your own sample data, use [ProjectStructureExample.REDCAP.xml](redcap_example/ProjectStructureExample.REDCap.xml) or upload with our example data using [ProjectStructure_with_data.xml](redcap_example/ProjectStructure_with_data.xml).
 3. Click **Create Project**
+
+## REDCap API Access
+To gain API access, you'll need to request a token. To do so:
+1. Open your REDCap project
+2. Select **User Rights** from the side menu
+3. Select your usr and click **Edit user privileges**
+4. Check the boxes **API Export** and **API Import/Update** and save changes
+5. Click **API** from the side menu
+6. Click **Request API token**. You will recieve an email when your REDCap administer has approved your request.
+7. Once approved, return to **API** from the side menu and you will now see your token. Copy that token and put it in a text file.
+8. In `read_token.py`, assign `token_loc` to be the path to the text file holding your REDCap token 
 
 # QC Steps
 ### Prepare comparison sources
@@ -90,7 +186,6 @@ Our example only compares to REDCap, but you may wish to add additional nodes to
 |---|---|---|---|---|
 | fields_list | list | Fields to pull from REDCap. | [] | No |
 | token | func | Method that gets token. | No default | No |
-| settings | dict | Dictionary containing any additional actions to be performed on the request. | {} | Yes |
 | redcap_url | str| REDCap API URL for your project. | No | No |
 
 ### Walk
@@ -126,6 +221,7 @@ If all of those checks pass, the we create a destination path for the file and a
 2. Run `compare_sources_and_duplicates()` from `main()`
     - Compares id_dates in filenames to REDCap
         - If the file is within the date range but there is no match, the script creates an excel file for review.
+        - If the filename date occurs after the *record_end_date* due to a typo or the test occuring outside of the range, it will be flagged and caught in the *flag_pipeline_flagged_not_in_date_range_example* JSON. Review all filenames to make sure it was not flagged due to a typo.
     - Compares tech_ids to REDCap
         - Writes non-matches to an excel for review
     - Checks for duplicate files
@@ -204,13 +300,15 @@ The sample data provided to run the QC can be found in [sample_data](sample_data
 To follow along with this walkthrough, make sure that you have set up your example REDCap according to the instructions above.
 Note that all resulting JSONs are reference by their key in `static.json` as individual filenames will change.
 
+This example contains commands to run each step in an interactive python shell, but you may also run each step my running main.py and commenting/uncommenting each method call. 
+
 ### Pull REDCap Data
 1. Ensure that you have edited your `read_token.py` file to read in your REDCap API token.
 2. In your `config.json`, update your `redcap_url` key to hold your REDCap API URL.
 3. Run the following commands:
 ```python
-from main import pipeline_pull_compare_sources
-pipeline_pull_compare_sources()
+import main
+main.pull_comparison_sources()
 ```
     - This will result in two files:
         - `pull_sources_pipeline_redcap_records`: All records pulled from REDCap
@@ -219,8 +317,8 @@ pipeline_pull_compare_sources()
 ### Walk Sample Data
 1. Run the following commands:
 ```python
-from main import pipeline_walk
-pipeline_walk()
+import main
+main.walk()
 ```
     - This will result in two files:
         - `walk_pipeline_walk`: Files that were found and passed checks.
@@ -235,8 +333,8 @@ pipeline_walk()
 1. In [qc_pipelines.compare_sources_and_duplicates](qc_pipelines.py), update the `record_end_date` in `kwargs` to be your desired end date. For our tests, we used (2025, 4, 30).
 2. Run the following commands:
 ```python
-from main import pipeline_compare_sources_and_duplicates
-pipeline_compare_sources_and_duplicates()
+import main
+main.compare_sources_and_duplicates()
 ```
     - This will result in 7 files:
         - `flag_pipeline_passed`: Files that passed all checks.
@@ -259,8 +357,8 @@ pipeline_compare_sources_and_duplicates()
 1. In [qc_pipelines.move_and_update](qc_pipelines.py), ensure that `move_back` in `kwargs` is set to be `False`.
 2. Run the following commands:
 ```python
-from main import pipeline_move_and_update
-pipeline_move_and_update()
+import main
+main.move_and_update()
 ```
      - This should move all passed files from the previous step into organized folders within `passed_data/`.
      - You may check and see that the clean dataset found in `passed_data/clean_dataset/` has also been updated with the moved data.

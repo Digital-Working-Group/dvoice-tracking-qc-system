@@ -31,7 +31,6 @@ def pull_comparison_sources():
                         'data_loc',
                         'information_sheet_complete'],
         'token': read_token,
-        'settings': {'process': process_record},
         'redcap_url': gld.get_root_fp('redcap_url')
     }
 
