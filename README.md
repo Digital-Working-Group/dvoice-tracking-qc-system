@@ -157,24 +157,25 @@ If all of those checks pass, the we create a destination path for the file and a
 #### Keyword Arguments for compare_sources_and_duplicates()
 | variable name | type(s) | description | default value | optional |
 |---|---|---|---|---|
-| record_end_date | DT obj | Cut-off date to check. | today | Yes |
+| record_end_date | datetime obj | Cut-off date to check. | today | Yes |
 | rc_tech_id_fieldname | str | REDCap fieldname from PVT. | No default | No |
 | rc_date_fieldname | str | REDCap date fieldname from PVT. | No default | No |
 | redcap_entries | str | Path to REDCap pull from step_0. | No default | No |
 | ext | str | Filename extension (in this case, media type). | No default | Yes |
 
 ### Move and update
-1. Ensure that the KWARG `move_back` is set to False
-2. Run `move_and_update()` from `main()`
+1. See `main.move_and_update()`.
+    - See [Move and Update the Clean Dataset](#move-and-update-the-clean-dataset) for a usage example.
     - This step moves files to their final destinations and then updates the clean dataset with all of the files cleaned and moved. 
-3. After running the move, review the file generated. If the move was interrupted or looks incorrect, change *move_back* in the kwargs to True.
-4. Review the new clean dataset to verify that it looks correct. 
+    - If the kwarg *move_back* is False, it will move the source files to their destinations. If set to True, it will move them back from their intended destinations back to their original source location.
+2. After running the move, review the file generated. If the move was interrupted or looks incorrect, change *move_back* in the kwargs to True and rerun the script to move the files back to their original locations.
+3. Review the new clean dataset to verify that it looks correct. 
 
-#### KWARGS
+#### Keyword Arguments for move_and_update()
 | variable name | type(s) | description | default value | optional |
 |---|---|---|---|---|
 | src_dst_func | func | Get src and dst for move. | get_src_dst | Yes |
-| move_back | bool | Move from src to dst. It should be True to move back to the original location. | False | Yes |
+| move_back | bool | Move from src to dst. It should be True to move back to the original location (dst to src). | False | Yes |
 | clean_dataset | str | Filepath to the current clean dataset | No default | No |
 
 # Usage Example
