@@ -3,7 +3,7 @@ process_record.py
 Holds methods for processing requests from data sources
 """
 from collections import defaultdict
-from id_validation import redcap_to_pid
+from qc_scripts.utility.id_validation import redcap_to_pid
 
 def process_record(rc_output):
     """

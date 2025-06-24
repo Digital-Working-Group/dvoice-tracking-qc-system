@@ -212,6 +212,7 @@ Note that all resulting JSONs are referenced by their key in `static.json` as in
 ### Pull REDCap Data
 1. Ensure that you have edited your `read_token.py` file to read in your REDCap API token.
 2. In your `config.json`, update your `redcap_url` key to hold your REDCap API URL.
+    - For example, the BUMC REDCap URL is `https://redcap.bumc.bu.edu/api/`.
 3. Run the following commands:
 ```python
 from main import pipeline_pull_compare_sources
