@@ -10,7 +10,7 @@ def dst_filename(filepath):
     """
     Makes sure that the filename is in the correct format
     """
-    pattern = re.compile(r'([A-Za-z]{2}\d{1,2})_(\d{4,5})_(\d{8})_(\d{3,4})_(remote|in-person)') # make this a kwarg?
+    pattern = re.compile(r'([A-Za-z]{2}\d{1,2})_(\d{4,5})_(\d{8})_(\d{3,4})_(remote|in-person)', flags=re.IGNORECASE)
     dir_path, filename = os.path.split(filepath)
     name, ext = os.path.splitext(filename)
 

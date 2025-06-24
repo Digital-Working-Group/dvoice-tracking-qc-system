@@ -126,6 +126,7 @@ def check_location(input_data, **kwargs):
     for id_date, data in tqdm(input_data.items()):
         location_num = redcap_entries[id_date]['data_loc']
         for entry in data:
+            entry['location'] = entry['location'].lower()
             if location_num == '0':
                 entry['redcap_location'] = 'remote'
             elif location_num == '1':

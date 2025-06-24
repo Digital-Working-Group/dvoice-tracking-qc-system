@@ -16,7 +16,6 @@ from qc_scripts.move import move_files
 from qc_scripts.clean_dataset import update_clean_dataset
 from qc_scripts.utility.read import read_dictionary_file
 from qc_scripts.utility import get_latest_data as gld
-from qc_scripts.utility.process_record import process_record
 from qc_scripts.walk import match_filename_format
 
 def pull_comparison_sources():
