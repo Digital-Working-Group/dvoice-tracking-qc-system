@@ -80,10 +80,11 @@ See [templates](templates/) for the template files you should copy. Copy each on
 # QC Steps
 ### Prepare comparison sources
 Our example only compares to REDCap, but you may wish to add additional nodes to compare with other data sources.
-1. Run `pull_comparison_sources()` from `main()`
+1. See `main.pull_comparison_sources()`.
     - This pulls data from REDCap and reformats it to be keyed by id_date.
+    - See [Pull REDCap Data](#pull-redcap-data) for a usage example.
 
-#### KWARGS
+#### Keyword Arguments for pull_comparison_sources()
 | variable name | type(s) | description | default value | optional |
 |---|---|---|---|---|
 | fields_list | list | Fields to pull from REDCap. | [] | No |
@@ -94,15 +95,16 @@ Our example only compares to REDCap, but you may wish to add additional nodes to
 ### Walk
 This step walks over a predefined folder and outputs JSONs to describe files found that matched the walk parameters and all other files found in the given directory (excluding anything from the ignore_list).
 
-1. Run `walk` from `main()`
-2. Check the *walk_pipeline_walk* and *walk_pipeline_other_walk* JSON files (see the updated static.json for filepaths) to resolve any issues. Issues and resolutions include:
+1. See `main.walk()`.
+    - See [Walk Sample Data](#walk-sample-data) for a usage example.
+2. The *walk_pipeline_walk* and *walk_pipeline_other_walk* JSON files (see the updated static.json for filepaths) will contain flagged issues. Issues and resolutions include:
     - Wrong extension type: This file extension wasn't expected, handle accordingly (e.g., Move the file out to a different folder.)
     - No match: Filename did not match the regex. Modify the filename to fit the expected pattern.
     - Invalid date: Verify the date with your team.
-3. Rerun the script until the failures have been resolved. 
+3. The script can be rerun until the failures have been resolved. 
     - You may want to move on to the next step before fixing all of these errors if you are waiting on input from team members.
 
-#### `qc_scripts.walk.qc_walk()` Keyword arguments used in `qc_pipelines.walk()`
+#### Keyword Arguments for walk() 
 | variable name | type(s) | description | default value | optional |
 |---|---|---|---|---|
 | roots | list | Filepaths to crawl. | No default | No |
