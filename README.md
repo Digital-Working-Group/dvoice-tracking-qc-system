@@ -157,7 +157,7 @@ If all of those checks pass, the we create a destination path for the file and a
 #### Keyword Arguments for compare_sources_and_duplicates()
 | variable name | type(s) | description | default value | optional |
 |---|---|---|---|---|
-| record_end_date | datetime obj | Cut-off date to check. | today | Yes |
+| record_end_date | datetime | Cut-off date to check. | today | Yes |
 | rc_tech_id_fieldname | str | REDCap fieldname from PVT. | No default | No |
 | rc_date_fieldname | str | REDCap date fieldname from PVT. | No default | No |
 | redcap_entries | str | Path to REDCap pull from step_0. | No default | No |
@@ -207,8 +207,8 @@ The sample data provided to run the QC can be found in [sample_data](sample_data
 
 ## Sample QC Walkthrough
 
-To follow along with this walkthrough, make sure that you have set up your example REDCap according to the instructions above.
-Note that all resulting JSONs are reference by their key in `static.json` as individual filenames will change.
+To follow along with this walkthrough, make sure that you have set up your example REDCap according to the [instructions above](#redcap-setup).
+Note that all resulting JSONs are referenced by their key in `static.json` as individual filenames will change.
 
 ### Pull REDCap Data
 1. Ensure that you have edited your `read_token.py` file to read in your REDCap API token.
@@ -218,9 +218,9 @@ Note that all resulting JSONs are reference by their key in `static.json` as ind
 from main import pipeline_pull_compare_sources
 pipeline_pull_compare_sources()
 ```
-    - This will result in two files:
-        - `pull_sources_pipeline_redcap_records`: All records pulled from REDCap
-        - `pull_sources_pipeline_fix_redcap`: Entries that need to be reviewed and corrected on REDCap. Our sample data should flag the record_id DC265 and DC0212432.
+- This will result in two files:
+    - `pull_sources_pipeline_redcap_records`: All records pulled from REDCap
+    - `pull_sources_pipeline_fix_redcap`: Entries that need to be reviewed and corrected on REDCap. Our sample data should flag the record_id DC265 and DC0212432.
 
 ### Walk Sample Data
 1. Run the following commands:
