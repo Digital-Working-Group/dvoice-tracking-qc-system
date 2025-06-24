@@ -115,16 +115,21 @@ This step walks over a predefined folder and outputs JSONs to describe files fou
 | walk_kwargs | dict | Any additional walk kwargs. | {} | Yes |
 
 ### Compare sources and duplicates
-This step filters based on some example criteria to ensure that the filenames match the data recorded on REDCap and that there are no extra or duplicate files. The specific steps used in this example include:
-    - Checking that the id_date exists on REDCap.
-    - Checking that the tester_id matches the one recorded on REDCap.
-    - Checking that no duplicate files exist.
-    - Checking that no extra files exist.
-    - Checking that the location in the filename matches the location recorded on REDCap.
+This step filters based on some example criteria to ensure that the filenames match the data recorded on REDCap and that there are no extra or duplicate files.
+
+The specific steps used in this example include:
+- Checking that the id_date exists on REDCap.
+- Checking that the tester_id matches the one recorded on REDCap.
+- Checking that no duplicate files exist.
+- Checking that no extra files exist.
+- Checking that the location in the filename matches the location recorded on REDCap.
+
 If all of those checks pass, the we create a destination path for the file and add it to the dictionary. JSONs are written for the passed files as well as failures at each node in the pipeline.
 
-1. Update the kwargs *record_end_date* with the date that you want your QC to go through.
-2. Run `compare_sources_and_duplicates()` from `main()`
+1. See `main.compare_sources_and_duplicates()`
+    - See [Compare Sources and Duplicates](#compare-sources-and-duplicates) for a usage example.
+2. The kwarg *record_end_date* should be updated with the date that you want your QC to go through.
+2. This step accomplishes the following:
     - Compares id_dates in filenames to REDCap
         - If the file is within the date range but there is no match, the script creates an excel file for review.
     - Compares tech_ids to REDCap
@@ -133,7 +138,7 @@ If all of those checks pass, the we create a destination path for the file and a
     - Checks that one 1 file exists for each id_date
     - Verifies that filename and REDCap locations match
     - Writes destination paths for passed files
-3. Check all the failure files generated, including the excels generated for id_date and tech_id REDCap mismatches. 
+3. Failure JSON files are generated and XLSX files containing information on id_date and tech_id REDCap mismatches. 
     - JSONs to check:
         - flag_pipeline_flagged_no_redcap_entry_example
         - flag_pipeline_flagged_not_in_date_range_example
@@ -142,22 +147,21 @@ If all of those checks pass, the we create a destination path for the file and a
         - flag_pipeline_extra_files
         - flag_pipeline_duplicates
         - flag_pipeline_location_mismatch
-    - xlsx to check (only written if they are not empty):
-        - /flagged/no_redcap_entry
-        - /flagged/tester_id_mismatch
-        - /flagged/tester_id_no_redcap
-4. Fix all filenames where you can easily determine the error or work with your team to resolve remaining errors.
-5. Re-run script after corrections are made and continue checking and re-running until failures are solved.
+    - XLSXs to check (only written if they are not empty):
+        - flagged/no_redcap_entry
+        - flagged/tester_id_mismatch
+        - flagged/tester_id_no_redcap
+4. Filename errors should then be resolved.
+5. The script can be rerun after corrections are made until failures are solved.
 
-#### KWARGS
+#### Keyword Arguments for compare_sources_and_duplicates()
 | variable name | type(s) | description | default value | optional |
 |---|---|---|---|---|
-| redcap_entries | str | Path to REDCap pull from step_0. | No default | No |
 | record_end_date | DT obj | Cut-off date to check. | today | Yes |
 | rc_tech_id_fieldname | str | REDCap fieldname from PVT. | No default | No |
 | rc_date_fieldname | str | REDCap date fieldname from PVT. | No default | No |
+| redcap_entries | str | Path to REDCap pull from step_0. | No default | No |
 | ext | str | Filename extension (in this case, media type). | No default | Yes |
-
 
 ### Move and update
 1. Ensure that the KWARG `move_back` is set to False
@@ -232,7 +236,7 @@ pipeline_walk()
             - "sample_data/wav/BL01-06800_20250509_112_in-person.wav",
             - "sample_data/wav/BL01_38126_20250108_in-person.wav"
 
-### Compare filename and REDCap data, flag duplicates
+### Compare Sources and Duplicates
 1. In [qc_pipelines.compare_sources_and_duplicates](qc_pipelines.py), update the `record_end_date` in `kwargs` to be your desired end date. For our tests, we used (2025, 4, 30).
 2. Run the following commands:
 ```python
