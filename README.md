@@ -1,6 +1,6 @@
-# GRIP Tracking and QC System
+# Digital Voice Tracking and QC System
 
-This repository contains an outline to set up qc_pipelines and walks through an example qc run on an example REDCap with fictitious participant data.
+This repository contains an outline to set up QC (quality control) pipelines and walks through an example QC run on a sample REDCap with fictitious participant data.
 
 | Table of Contents |
 |---|
@@ -14,14 +14,16 @@ This repository contains an outline to set up qc_pipelines and walks through an 
 | [Citations](#citations) |
 
 # Introduction
-See [main_template.py](templates/main_template.py) and [qc_pipelines.py](templates/qc_pipelines.py). These scripts were developed using Python 1.13.1, but have been tested with (CODY + JULIA ADD).
+See [main_template.py](templates/main_template.py) and [qc_pipelines.py](templates/qc_pipelines.py). These scripts were developed using Python 3.13.1, but have been tested with (CODY + JULIA ADD).
 
 # REDCap Details
 ## Project Structure
-To build out your own Quality Control System, see [ProjectStructureExample.REDCap.xml](redcap_example/ProjectStructureExample.REDCap.xml) for an example REDCap structure. You may import this structure as the base for your own REDCap projects used for GRIP tracking. This project structure has only one form ("Information Sheet") with fields described below:
+To build out your own QC System, see [ProjectStructureExample.REDCap.xml](redcap_example/ProjectStructureExample.REDCap.xml) for a sample REDCap structure. To create a new REDCap project via importing a REDCap XML file, create a "New Project" and select "Upload a REDCap project XML file (CDISC ODM format)" and upload the appropriate XML file. See the [REDCap Details](#redcap-details) section for more detailed information.
+
+This project structure has only one form ("Information Sheet") with fields described below:
 | Fieldname | Description | Example |
 |---|---|---|
-| record_id | Record ID for that data. For our testing, we chose the format Cohort Code (two letters and two numbers) and Participant ID (five numbers). All record ids are samples only. | AB0012345 |
+| record_id | Record ID for that data. For our testing, we chose a format consisting of a Cohort Code (two letters and two numbers) and a Participant ID (five numbers). All record ids are samples only. | AB0012345 |
 | date_dc | The date the data was captured (YYYY-MM-DD) | 2025-05-29 |
 | tester_id | ID of the tester. | 123 |
 | data_loc | The location where the data was collected. | remote |
@@ -33,24 +35,23 @@ REDCap Software - Version 15.2.5 - © 2025 Vanderbilt University
 This repository contains scripts to build and customize pipelines as well as sample data to follow along with the example presented below. 
 To familiarize yourself with this repository, consider exploring:
 
-
-- [qc_pipelines.py](qc_scripts/qc_pipelines.py): combines scripts by inputting them as nodes to pipelines to build out the structure of the qc
+- [qc_pipelines.py](qc_scripts/qc_pipelines.py): combines scripts by inputting them as nodes to pipelines to build out the structure of the QC
 - [stream.py](qc_scripts/stream.py): holds the Pipeline and Node class structures
 - [logger.py](qc_scripts/logger.py): handles the saving and logging of pipeline results
 - [redcap.py](qc_scripts/redcap.py): handles pulling and validating REDCap records
 - [walk.py](qc_scripts/walk.py): walk functions to collect files
 - [compare_redcap.py](qc_scripts/compare_redcap.py): functions to compare filename information to REDCap field data
-- [write_flagged_excel.py](qc_scripts/write_flagged_excel.py): writes excels for manual review
+- [write_flagged_excel.py](qc_scripts/write_flagged_excel.py): writes excel files for manual review
 - [duplicates.py](qc_scripts/duplicates.py): functions to check for duplicates or too many file occurrences
 - [destination.py](qc_scripts/destination.py): functions to define destination of files that passed all checks
 - [move.py](qc_scripts/move.py): functions to move files
 - [clean_dataset.py](qc_scripts/clean_dataset.py): functions to compare to and update the clean dataset of all files that have passed the QC
 
-To follow along with the example, use the files found in [redcap_example](redcap_example/) to set up your REDCap Project.
+To follow along with the example, use the files found in [redcap_example](redcap_example/) to set up your REDCap Project. See the [REDCap Details](#redcap-details) section for more detailed information.
 
 # Provenance and Logging
 
-This repository handles logging using a provenance schema, based loosely off of the [Radifox](https://github.com/jh-mipc/radifox), which provides an example of provenance applied to imaging. You may edit the log contents by modifying the provenance dictionaries created in [logger.log_pipeline()](qc_scripts/logger.py) and [logger.log_node()](qc_scripts/logger.py). Our current implementation captures the following:
+This repository handles logging using a provenance schema, based loosely off of [RADIFOX](https://github.com/jh-mipc/radifox), which provides an example of provenance applied to imaging. You may edit the log contents by modifying the provenance dictionaries created in [logger.log_pipeline()](qc_scripts/logger.py) and [logger.log_node()](qc_scripts/logger.py). Our current implementation captures the following:
     - Pipeline Data:
         - Pipeline name
         - Start time
@@ -66,24 +67,24 @@ This repository handles logging using a provenance schema, based loosely off of 
         - Node inputs (kwargs)
 
 # Installation and Setup
-## Script setup
+## Script Setup
 Install the requirements needed to run these scripts:
 ```sh
 pip install -r py3-13-1_requirements.txt
 ```
 
-See [templates](templates/) for the template files you should copy. Copy each one into your `qc_system` folder and rename by removing *template* from the filename. Fill in any filepaths, tokens, or URLs needed.
+See [templates](templates/) for the template files you should copy. Copy each one into your root folder and rename by removing *template* from the filename. Fill in any filepaths, tokens, or URLs needed.
 
 ## REDCap Setup
-1. Select **New Project**
-2. Under **Project creation option** select *upload a REDCap project XML file*. If you would like to use our structure but create your own sample data, use [ProjectStructureExample.REDCAP.xml](redcap_example/ProjectStructureExample.REDCap.xml) or upload with our example data using [ProjectStructure_with_data.xml](redcap_example/ProjectStructure_with_data.xml).
-3. Click **Create Project**
+1. Select **New Project**.
+2. Under **Project creation option** select *upload a REDCap project XML file*. If you would like to use our structure but create your own sample data, use [ProjectStructureExample.REDCAP.xml](redcap_example/ProjectStructureExample.REDCap.xml) or upload with our sample data using [ProjectStructure_with_data.xml](redcap_example/ProjectStructure_with_data.xml).
+3. Click **Create Project**.
 
 # QC Steps
 ### Prepare comparison sources
 Our example only compares to REDCap, but you may wish to add additional nodes to compare with other data sources.
 1. Run `pull_comparison_sources()` from `main()`
-    - This pulls data from REDCap and reformats to be keyed by id_date.
+    - This pulls data from REDCap and reformats it to be keyed by id_date.
 
 #### KWARGS
 | variable name | type(s) | description | default value | optional |
@@ -97,20 +98,21 @@ Our example only compares to REDCap, but you may wish to add additional nodes to
 This step walks over a predefined folder and outputs JSONs to describe files found that matched the walk parameters and all other files found in the given directory (excluding anything from the ignore_list).
 
 1. Run `walk` from `main()`
-2. Check the *walk_pipeline_walk* and *walk_pipeline_other_walk* JSON files to resolve any issues. Issues and resolutions include:
-    - Wrong extension type: Move file to the appropriate folder.
+2. Check the *walk_pipeline_walk* and *walk_pipeline_other_walk* JSON files (see the updated static.json for filepaths) to resolve any issues. Issues and resolutions include:
+    - Wrong extension type: This file extension wasn't expected, handle accordingly (e.g., Move the file out to a different folder.)
     - No match: Filename did not match the regex. Modify the filename to fit the expected pattern.
     - Invalid date: Verify the date with your team.
 3. Rerun the script until the failures have been resolved. 
     - You may want to move on to the next step before fixing all of these errors if you are waiting on input from team members.
-#### KWARGS
+
+#### `qc_scripts.walk.qc_walk()` Keyword arguments used in `qc_pipelines.walk()`
 | variable name | type(s) | description | default value | optional |
 |---|---|---|---|---|
+| roots | list | Filepaths to crawl. | No default | No |
+| ignore_list | list | Files or folders to ignore in walk. | [] | Yes |
+| keep_exts | tuple | File extensions to look for. | No default | No |
 | pattern_list | list | Tuples of regex pattern and indices. | None | Yes |
 | make_kv | func | Defines key-value pairs for walk data. | default_make_kv | Yes |
-| ignore_list | list | Files or folders to ignore in walk. | [] | Yes |
-| roots | list | Filepaths to crawl. | No default | No |
-| keep_exts | tuple | File extensions to look for. | No default | No |
 | walk_kwargs | dict | Any additional walk kwargs. | {} | Yes |
 
 ### Compare sources and duplicates

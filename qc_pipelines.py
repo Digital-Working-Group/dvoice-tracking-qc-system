@@ -50,11 +50,11 @@ def walk():
     """
 
     kwargs = {
-        'pattern_list': example_pattern_data(),
-        'make_kv': match_filename_format,
         'roots': ["sample_data/"],
         'ignore_list': [],
         'keep_exts': ('wav', 'm4a', 'mp3'),
+        'pattern_list': example_pattern_data(),
+        'make_kv': match_filename_format,
         'walk_kwargs': {'multiple_values': True, 'ext': 'walk'}
     }
 
