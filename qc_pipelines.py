@@ -83,7 +83,7 @@ def compare_sources_and_duplicates():
     }
 
     ## Not being used - check with Cody if we want to be moving the duplicates
-    duplciate_kwargs = {
+    duplicate_kwargs = {
         'duplicate_root': 'sample_data/duplicates/'
     }
 
@@ -97,7 +97,7 @@ def compare_sources_and_duplicates():
                              **{'flag_type': 'tester_id_mismatch', 'ext': 'video'}))
         .add_node(ActionNode(func=write_flagged_excel, input_keys=['flagged_tester_id_no_redcap_example'],
                              **{'flag_type': 'tester_id_no_redcap', 'ext': 'video'}))
-        .add_node(FilterNode(func=clean_duplicates, **duplciate_kwargs))
+        .add_node(FilterNode(func=clean_duplicates, **duplicate_kwargs))
         .add_node(FilterNode(func=flag_file_count))
         .add_node(FilterNode(func=check_location, **{'redcap_entries': redcap_entries}))
         .add_node(FilterNode(func=get_dst))

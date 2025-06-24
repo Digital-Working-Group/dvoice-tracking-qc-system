@@ -12,7 +12,7 @@ def get_data_request(token, fields_list):
     Inputs:
         token: redcap API token
         fields_list: list of fieldnames to pull
-    Returns: 
+    Returns:
 
     """
     data = {'token': token,
@@ -36,19 +36,17 @@ def pull_redcap(**kwargs):
     """
     Pulls data from redcap
     """
-    ## kwargs
     token_func = kwargs.get('token')
     token = token_func()
     fields_list = kwargs.get('fields_list', [])
     redcap_url = kwargs.get('redcap_url')
     ext = kwargs.get('ext', 'redcap_records')
-
     settings = kwargs.get('settings', {})
 
     data = get_data_request(token, fields_list)
-    r = requests.post(redcap_url, data=data, timeout=10).json()
+    req_js = requests.post(redcap_url, data=data, timeout=10).json()
     process = settings['process']
-    return [{'final': process(r), 'ext': ext}]
+    return [{'final': process(req_js), 'ext': ext}]
 
 def validate_redcap_entries(input_data, **kwargs):
     """
@@ -58,7 +56,7 @@ def validate_redcap_entries(input_data, **kwargs):
 
     if isinstance(input_data, str):
         input_data = read_dictionary_file(input_data)
-    
+
     invalid_id = []
     missing_fields = []
     for id_date, data in input_data.items():

@@ -11,9 +11,9 @@ def process_record(rc_output):
     """
     records = defaultdict(lambda: defaultdict(str))
     for item in rc_output:
-        if item['date_dc'] != '' and item['record_id'] != '':
-            date = item['date_dc']
-            date = date.replace("-","")
+        date_dc = item['date_dc']
+        if date_dc != '' and item['record_id'] != '':
+            date = date_dc.replace("-","")
             try:
                 fid = redcap_to_pid(item['record_id'])
                 records[f'{fid}_{date}'] = item
