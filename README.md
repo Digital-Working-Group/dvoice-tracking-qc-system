@@ -49,19 +49,19 @@ To familiarize yourself with this repository, consider exploring:
 # Provenance and Logging
 
 This repository handles logging using a provenance schema, based loosely off of [RADIFOX](https://github.com/jh-mipc/radifox), which provides an example of provenance applied to imaging. You may edit the log contents by modifying the provenance dictionaries created in [logger.log_pipeline()](qc_scripts/logger.py) and [logger.log_node()](qc_scripts/logger.py). Our current implementation captures the following:
-    - Pipeline Data:
-        - Pipeline name
-        - Start time
-        - Duration
-        - Pipeline function name
-        - Pipeline input
-        - Nodes
-    - Node Data:
-        - Node name
-        - Start time
-        - Duration
-        - Node function name
-        - Node inputs (kwargs)
+- Pipeline Data:
+    - Pipeline name
+    - Start time
+    - Duration
+    - Pipeline function name
+    - Pipeline input
+    - Nodes
+- Node Data:
+    - Node name
+    - Start time
+    - Duration
+    - Node function name
+    - Node inputs (kwargs)
 
 # Installation and Setup
 ## Script Setup
