@@ -46,8 +46,6 @@ To familiarize yourself with this repository, consider exploring:
 - [move.py](qc_scripts/move.py): functions to move files
 - [clean_dataset.py](qc_scripts/clean_dataset.py): functions to compare to and update the clean dataset of all files that have passed the QC
 
-To follow along with the example, use the files found in [redcap_example](redcap_example/) to set up your REDCap Project. See the [REDCap Details](#redcap-details) section for more detailed information.
-
 # Provenance and Logging
 
 This repository handles logging using a provenance schema, based loosely off of [RADIFOX](https://github.com/jh-mipc/radifox), which provides an example of provenance applied to imaging. You may edit the log contents by modifying the provenance dictionaries created in [logger.log_pipeline()](qc_scripts/logger.py) and [logger.log_node()](qc_scripts/logger.py). Our current implementation captures the following:
