@@ -4,7 +4,6 @@ This repository contains an outline to set up QC (quality control) pipelines and
 
 | Table of Contents |
 |---|
-| [Introduction](#introduction) |
 | [REDCap Details](#redcap-details) |
 | [Repository Contents](#repository-contents) |
 | [Provenance and Logging](#provenance-and-logging) |
