@@ -228,14 +228,14 @@ pipeline_pull_compare_sources()
 from main import pipeline_walk
 pipeline_walk()
 ```
-    - This will result in two files:
-        - `walk_pipeline_walk`: Files that were found and passed checks.
-        - `walk_pipeline_other_walk`: Files containing an unwanted extension or that did not match the filename pattern provided. Our sample data will flag the following files:
-            - "sample_data/flac/BL01_06800_20250508_115_remote_bad_extension.flac"
-            - "sample_data/m4a/BL00-13234_20241217_112_remote.m4a"
-            - "sample_data/mp3/DC0312566.mp3"
-            - "sample_data/wav/BL01-06800_20250509_112_in-person.wav",
-            - "sample_data/wav/BL01_38126_20250108_in-person.wav"
+- This will result in two files:
+    - `walk_pipeline_walk`: Files that were found and passed checks.
+    - `walk_pipeline_other_walk`: Files containing an unwanted extension or that did not match the filename pattern provided. Our sample data will flag the following files:
+        - "sample_data/flac/BL01_06800_20250508_115_remote_bad_extension.flac"
+        - "sample_data/m4a/BL00-13234_20241217_112_remote.m4a"
+        - "sample_data/mp3/DC0312566.mp3"
+        - "sample_data/wav/BL01-06800_20250509_112_in-person.wav",
+        - "sample_data/wav/BL01_38126_20250108_in-person.wav"
 
 ### Compare Sources and Duplicates
 1. In [qc_pipelines.compare_sources_and_duplicates](qc_pipelines.py), update the `record_end_date` in `kwargs` to be your desired end date. For our tests, we used (2025, 4, 30).
@@ -244,22 +244,22 @@ pipeline_walk()
 from main import pipeline_compare_sources_and_duplicates
 pipeline_compare_sources_and_duplicates()
 ```
-    - This will result in 7 files:
-        - `flag_pipeline_passed`: Files that passed all checks.
-        - `flag_pipeline_flagged_not_in_date_range_example`: Filename date occurred after the record_end_date.
-            - Our sample data will flag DC02-61041_20250507 and BL01-06800_20251015.
-        - `flag_pipeline_flagged_no_redcap_entry_example`: Filename id_date did not match those found in the REDCap records.
-            - Also see [flagged/no_redcap_entry](flagged/no_redcap_entry/) for an Excel summary.
-            - Our sample data will flag DC02-58910_20250101.
-        - `flag_pipeline_flagged_tester_id_mismatch_example`: Filenames where the tester_id did not match those found in the REDCap records.
-            - Also see [flagged/tester_id_mismatch](flagged/tester_id_mismatch/) for an Excel summary.
-            - Our sample data will flag BL01-06800_20250220.
-        - `flag_pipeline_duplicates`: Files with same id_date and same contents.
-            - Our sample data will flag BL01-04952_20250218.
-        - `flag_pipelines_extra_files`: Files with same id_date in the filename.
-            - Our sample data will flag BL01-04952_20250218.
-        - `flag_pipelines_location_mismatch`: Filenames where the location did not match the location recorded on REDCap.
-            - Our sample data will flag BL01-38126_20250108.
+- This will result in 7 files:
+    - `flag_pipeline_passed`: Files that passed all checks.
+    - `flag_pipeline_flagged_not_in_date_range_example`: Filename date occurred after the record_end_date.
+        - Our sample data will flag DC02-61041_20250507 and BL01-06800_20251015.
+    - `flag_pipeline_flagged_no_redcap_entry_example`: Filename id_date did not match those found in the REDCap records.
+        - Also see [flagged/no_redcap_entry](flagged/no_redcap_entry/) for an Excel summary.
+        - Our sample data will flag DC02-58910_20250101.
+    - `flag_pipeline_flagged_tester_id_mismatch_example`: Filenames where the tester_id did not match those found in the REDCap records.
+        - Also see [flagged/tester_id_mismatch](flagged/tester_id_mismatch/) for an Excel summary.
+        - Our sample data will flag BL01-06800_20250220.
+    - `flag_pipeline_duplicates`: Files with same id_date and same contents.
+        - Our sample data will flag BL01-04952_20250218.
+    - `flag_pipelines_extra_files`: Files with same id_date in the filename.
+        - Our sample data will flag BL01-04952_20250218.
+    - `flag_pipelines_location_mismatch`: Filenames where the location did not match the location recorded on REDCap.
+        - Our sample data will flag BL01-38126_20250108.
 
 ### Move and Update the Clean Dataset
 1. In [qc_pipelines.move_and_update](qc_pipelines.py), ensure that `move_back` in `kwargs` is set to be `False`.
