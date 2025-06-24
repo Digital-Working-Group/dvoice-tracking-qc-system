@@ -18,7 +18,7 @@ See [main_template.py](templates/main_template.py) and [qc_pipelines.py](templat
 
 # REDCap Details
 ## Project Structure
-To build out your own QC System, see [ProjectStructureExample.REDCap.xml](redcap_example/ProjectStructureExample.REDCap.xml) for a sample REDCap structure. To create a new REDCap project via importing a REDCap XML file, create a "New Project" and select "Upload a REDCap project XML file (CDISC ODM format)" and upload the appropriate XML file. See the [REDCap Details](#redcap-details) section for more detailed information.
+To build out your own QC System, see [ProjectStructureExample.REDCap.xml](redcap_example/ProjectStructureExample.REDCap.xml) for a sample REDCap structure. To create a new REDCap project via importing a REDCap XML file, see the [REDCap Setup](#redcap-setup) section for more detailed information.
 
 This project structure has only one form ("Information Sheet") with fields described below:
 | Fieldname | Description | Example |
@@ -28,8 +28,7 @@ This project structure has only one form ("Information Sheet") with fields descr
 | tester_id | ID of the tester. | 123 |
 | data_loc | The location where the data was collected. | remote |
 
-## REDCap Software Version
-REDCap Software - Version 15.2.5 - © 2025 Vanderbilt University
+REDCap Software Version 15.2.5 - © 2025 Vanderbilt University was utilized for this repository.
 
 # Repository Contents
 This repository contains scripts to build and customize pipelines as well as sample data to follow along with the example presented below. 
