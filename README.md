@@ -76,7 +76,7 @@ See [templates](templates/) for the template files you should copy. Copy each on
 
 ## REDCap Setup
 1. Select **New Project**.
-2. Under **Project creation option** select *upload a REDCap project XML file*. If you would like to use our structure but create your own sample data, use [ProjectStructureExample.REDCAP.xml](redcap_example/ProjectStructureExample.REDCap.xml) or upload with our sample data using [ProjectStructure_with_data.xml](redcap_example/ProjectStructure_with_data.xml).
+2. For the **Project creation option** select *Upload a REDCap project XML file (CDISC ODM format)*. If you would like to use our structure but create your own sample data, use [ProjectStructureExample.REDCAP.xml](redcap_example/ProjectStructureExample.REDCap.xml) or upload with our sample data using [ProjectStructure_with_data.xml](redcap_example/ProjectStructure_with_data.xml).
 3. Click **Create Project**.
 
 # QC Steps
