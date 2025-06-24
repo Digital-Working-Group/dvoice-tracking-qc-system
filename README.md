@@ -13,9 +13,6 @@ This repository contains an outline to set up QC (quality control) pipelines and
 | [Usage Example](#usage-example) |
 | [Citations](#citations) |
 
-# Introduction
-See [main_template.py](templates/main_template.py) and [qc_pipelines.py](templates/qc_pipelines.py). These scripts were developed using Python 3.13.1, but have been tested with (CODY + JULIA ADD).
-
 # REDCap Details
 ## Project Structure
 To build out your own QC System, see [ProjectStructureExample.REDCap.xml](redcap_example/ProjectStructureExample.REDCap.xml) for a sample REDCap structure. To create a new REDCap project via importing a REDCap XML file, see the [REDCap Setup](#redcap-setup) section for more detailed information.
@@ -48,7 +45,9 @@ To familiarize yourself with this repository, consider exploring:
 
 # Provenance and Logging
 
-This repository handles logging using a provenance schema, based loosely off of [RADIFOX](https://github.com/jh-mipc/radifox), which provides an example of provenance applied to imaging. You may edit the log contents by modifying the provenance dictionaries created in [logger.log_pipeline()](qc_scripts/logger.py) and [logger.log_node()](qc_scripts/logger.py). Our current implementation captures the following:
+This repository handles logging using a provenance schema, based loosely off of [RADIFOX](https://github.com/jh-mipc/radifox), which provides an example of provenance applied to imaging. You may edit the log contents by modifying the provenance dictionaries created in [logger.log_pipeline()](qc_scripts/logger.py) and [logger.log_node()](qc_scripts/logger.py).
+
+Our current implementation captures the following:
 - Pipeline Data:
     - Pipeline name
     - Start time
@@ -65,6 +64,7 @@ This repository handles logging using a provenance schema, based loosely off of 
 
 # Installation and Setup
 ## Script Setup
+These scripts were developed using Python 3.13.1, but have been tested with (CODY + JULIA ADD).
 Install the requirements needed to run these scripts:
 ```sh
 pip install -r py3-13-1_requirements.txt
