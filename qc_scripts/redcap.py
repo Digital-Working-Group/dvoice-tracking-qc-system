@@ -13,7 +13,7 @@ def get_data_request(token, fields_list):
     Inputs:
         token: redcap API token
         fields_list: list of fieldnames to pull
-    Returns: 
+    Returns:
 
     """
     data = {'token': token,
@@ -37,7 +37,6 @@ def pull_redcap(**kwargs):
     """
     Pulls data from redcap
     """
-    ## kwargs
     token_func = kwargs.get('token')
     token = token_func()
     fields_list = kwargs.get('fields_list', [])
@@ -47,6 +46,9 @@ def pull_redcap(**kwargs):
     data = get_data_request(token, fields_list)
     r = requests.post(redcap_url, data=data, timeout=10).json()
     return [{'final': r, 'ext': ext}]
+    req_js = requests.post(redcap_url, data=data, timeout=10).json()
+    process = settings['process']
+    return [{'final': process(req_js), 'ext': ext}]
 
 def validate_redcap_entries(input_data, **kwargs):
     """

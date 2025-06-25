@@ -7,7 +7,7 @@ def read_token():
     """
     get token
     """
-    token_loc = "YOUR TOKEN HERE"
+    token_loc = "FILEPATH TO YOUR TOKEN HERE"
     with open(token_loc, 'r') as infile:
         for line in infile:
             return line.strip()

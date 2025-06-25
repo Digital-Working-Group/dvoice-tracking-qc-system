@@ -68,7 +68,6 @@ def qc_walk(**kwargs):
         make_kv (func): how to create the key-value pairs in the result
         walk_kwargs (dict): additional kwargs to be passed in to qc_scripts.utility.walk
     """
-    ## kwargs
     roots = kwargs.get('roots')
     ignore_list = kwargs.get('ignore_list', [])
     keep_exts = kwargs.get('keep_exts', '')

@@ -48,11 +48,11 @@ def walk():
     """
 
     kwargs = {
-        'pattern_list': example_pattern_data(),
-        'make_kv': match_filename_format,
         'roots': ["sample_data/"],
         'ignore_list': [],
         'keep_exts': ('wav', 'm4a', 'mp3'),
+        'pattern_list': example_pattern_data(),
+        'make_kv': match_filename_format,
         'walk_kwargs': {'multiple_values': True, 'ext': 'walk'}
     }
 
@@ -66,7 +66,7 @@ def compare_sources_and_duplicates():
         - Compares id_date to REDCap
         - Compares tester_id to REDCap
         - Checks for duplicates
-        - Checks for too many file occurences 
+        - Checks for too many file occurrences
         - Compares location to REDCap
         - Writes file destination path
     """
@@ -81,21 +81,21 @@ def compare_sources_and_duplicates():
     }
 
     ## Not being used - check with Cody if we want to be moving the duplicates
-    duplciate_kwargs = {
+    duplicate_kwargs = {
         'duplicate_root': 'sample_data/duplicates/'
     }
 
     (Pipeline('flag_pipeline')
         .update_state('walk_passed', gld.get_filepath('walk_pipeline_walk'))
         .add_node(FilterNode(func=flag_id_date, input_key='walk_passed', **kwargs))
-        .add_node(ActionNode(func=write_flagged_excel, input_keys=['flagged_no_redcap_entry_example'], 
+        .add_node(ActionNode(func=write_flagged_excel, input_keys=['flagged_no_redcap_entry_example'],
                              **{'flag_type': 'no_redcap_entry', 'ext': 'example'}))
         .add_node(FilterNode(func=flag_tester_id, **kwargs))
-        .add_node(ActionNode(func=write_flagged_excel, input_keys=['flagged_tester_id_mismatch_example'], 
+        .add_node(ActionNode(func=write_flagged_excel, input_keys=['flagged_tester_id_mismatch_example'],
                              **{'flag_type': 'tester_id_mismatch', 'ext': 'video'}))
-        .add_node(ActionNode(func=write_flagged_excel, input_keys=['flagged_tester_id_no_redcap_example'], 
+        .add_node(ActionNode(func=write_flagged_excel, input_keys=['flagged_tester_id_no_redcap_example'],
                              **{'flag_type': 'tester_id_no_redcap', 'ext': 'video'}))
-        .add_node(FilterNode(func=clean_duplicates, **duplciate_kwargs))
+        .add_node(FilterNode(func=clean_duplicates, **duplicate_kwargs))
         .add_node(FilterNode(func=flag_file_count))
         .add_node(FilterNode(func=check_location, **{'redcap_entries': redcap_entries}))
         .add_node(FilterNode(func=get_dst))

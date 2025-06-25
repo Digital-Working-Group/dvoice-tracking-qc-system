@@ -1,5 +1,6 @@
 """
-
+id_validation.py
+validate IDs
 """
 import re
 
@@ -34,8 +35,7 @@ def validate_idtype(idtype):
         letters, digits = match.groups()
         digits = digits.zfill(2)
         return letters.upper() + digits
-    else:
-        raise AssertionError(f"invalid idtype of {idtype}")
+    raise AssertionError(f"invalid idtype of {idtype}")
 
 def validate_id(_id, remove_non_digits=True):
     """
@@ -67,4 +67,3 @@ def redcap_to_pid(redcap_id):
         return validate_idtype_and_id(id_type, _id)
 
     return None
-
