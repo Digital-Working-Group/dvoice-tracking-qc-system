@@ -11,13 +11,13 @@ class Pipeline:
     """
     String together functions within Nodes to run together
     """
-    def __init__(self, name, logger=Logger()):
+    def __init__(self, name, logger=Logger(), **kwargs):
         self.name = name
         self.nodes = []
         self.logger = logger
         self.all_failures = [] ## key it by the extention
         self.state = {}
-        self.ignore_log = []
+        self.ignore_log = kwargs.get('ignore_log', [])
         self.pipeline_input = {}
         self.init_context = self._get_init_context()
         self.start_time = None
