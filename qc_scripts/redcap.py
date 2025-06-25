@@ -44,11 +44,8 @@ def pull_redcap(**kwargs):
     ext = kwargs.get('ext', 'redcap_records')
 
     data = get_data_request(token, fields_list)
-    r = requests.post(redcap_url, data=data, timeout=10).json()
-    return [{'final': r, 'ext': ext}]
     req_js = requests.post(redcap_url, data=data, timeout=10).json()
-    process = settings['process']
-    return [{'final': process(req_js), 'ext': ext}]
+    return [{'final': req_js, 'ext': ext}]
 
 def validate_redcap_entries(input_data, **kwargs):
     """
