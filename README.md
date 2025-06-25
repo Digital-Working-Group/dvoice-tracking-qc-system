@@ -125,12 +125,22 @@ Install the requirements needed to run these scripts:
 pip install -r py3-13-1_requirements.txt
 ```
 
-See [templates](templates/) for the template files you should copy. Copy each one into your root folder and rename by removing *template* from the filename. Fill in any filepaths, tokens, or URLs needed.
+See [templates](templates/) for the template files you should copy. Copy each one into your root folder and rename by removing *_template* from the filename. Fill in any filepaths, tokens, or URLs needed.
 
-static.json should start looking like this:
+`config.json` should be edited to contain the path to the root folder for the provenance logs (`prov_root`) and the API URL for your REDCap.
+
 ```json
 {
-    "clean_dataset": "passed_data\\clean_dataset\\clean_dataset.json",
+    "prov_root": "provenance/",
+    "redcap_url": "https://redcap.bumc.bu.edu/api/"
+}
+```
+
+`static.json` will initially look like the below and each value will be populated with the relevant filepaths as the various parts of the pipeline generate files:
+
+```json
+{
+    "clean_dataset": "YOUR CURRENT CLEAN DATASET",
     "walk_pipeline_walk": "",
     "walk_pipeline_other_walk": "",
     "pull_sources_pipeline_redcap_records": "",
@@ -148,14 +158,32 @@ static.json should start looking like this:
 }
 ```
 
-config.json should contain the following, with the values filled out:
-```json
-{
-    "prov_root": "provenance",
-    "redcap_url": "YOUR_REDCAP_URL"
-}
+`main.py` will look identical to [main_template.py](templates/main_template.py).
+
+`read_token.py` should have the `token_loc` variable edited to contain the filepath to a text file that has a single line containing your [REDCap API token](#redcap-api-access).
+
+```py
+"""
+read_token_template.py
+read_token.py is not version controlled because it contains the path to your REDCap token.
+"""
+
+def read_token():
+    """
+    get token
+    """
+    token_loc = "some_folder/token/token.txt"
+    with open(token_loc, 'r') as infile:
+        for line in infile:
+            return line.strip()
+    print("Key not found")
+    return None
 ```
 
+The token text file should look like the below, where TOKEN_VALUE is replaced by the REDCap API token:
+```txt
+TOKEN_VALUE
+```
 ## REDCap Setup
 1. Select **New Project**.
 2. For the **Project creation option** select *Upload a REDCap project XML file (CDISC ODM format)*. If you would like to use our structure but create your own sample data, use [ProjectStructureExample.REDCAP.xml](redcap_example/ProjectStructureExample.REDCap.xml) or upload with our sample data using [ProjectStructure_with_data.xml](redcap_example/ProjectStructure_with_data.xml).
@@ -163,14 +191,14 @@ config.json should contain the following, with the values filled out:
 
 ## REDCap API Access
 To gain API access, you'll need to request a token. To do so:
-1. Open your REDCap project
-2. Select **User Rights** from the side menu
-3. Select your usr and click **Edit user privileges**
-4. Check the boxes **API Export** and **API Import/Update** and save changes
-5. Click **API** from the side menu
-6. Click **Request API token**. You will recieve an email when your REDCap administer has approved your request.
+1. Open your REDCap project.
+2. Select **User Rights** from the side menu.
+3. Select your usr and click **Edit user privileges**.
+4. Check the boxes **API Export** and **API Import/Update** and save changes.
+5. Click **API** from the side menu.
+6. Click **Request API token**. You will recieve an email when your REDCap administrator has approved your request.
 7. Once approved, return to **API** from the side menu and you will now see your token. Copy that token and put it in a text file.
-8. In `read_token.py`, assign `token_loc` to be the path to the text file holding your REDCap token 
+8. In `read_token.py`, assign `token_loc` to be the path to the text file holding your REDCap token.
 
 # QC Steps
 ### Prepare comparison sources
@@ -366,8 +394,8 @@ main.compare_sources_and_duplicates()
 import main
 main.move_and_update()
 ```
-     - This should move all passed files from the previous step into organized folders within `passed_data/`.
-     - You may check and see that the clean dataset found in `passed_data/clean_dataset/` has also been updated with the moved data.
+ - This should move all passed files from the previous step into organized folders within `passed_data/`.
+ - You may check and see that the clean dataset found in `passed_data/clean_dataset/` has also been updated with the moved data.
 
 # Citations
 ```bibtex
