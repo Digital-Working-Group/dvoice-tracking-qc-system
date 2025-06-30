@@ -255,7 +255,7 @@ If all of those checks pass, the we create a destination path for the file and a
     - Compares tech_ids to REDCap
         - Writes non-matches to an excel for review
     - Checks for duplicate files
-    - Checks that one 1 file exists for each id_date
+    - Checks that 1 file exists for each id_date
     - Verifies that filename and REDCap locations match
     - Writes destination paths for passed files
 4. Failure JSON files are generated and XLSX files containing information on id_date and tech_id REDCap mismatches. 
