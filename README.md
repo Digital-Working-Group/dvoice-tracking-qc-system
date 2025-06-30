@@ -66,16 +66,16 @@ Example provenance output:
 {
     "0": {
         "pipeline_name": "pull_sources_pipeline",
-        "start_time": "2025-06-24 15:01:35.084237",
-        "duration": "0:00:00.473617",
+        "start_time": "2025-06-30 12:54:51.507475",
+        "duration": "0:00:00.515104",
         "func_name": "pull_comparison_sources",
         "pipeline_input": {},
         "nodes": [
             {
                 "node_name": "pull_redcap",
-                "start_time": "2025-06-24 15:01:35.084237",
-                "duration": "0:00:00.472617",
-                "node_func": "<function pull_redcap at 0x0000023632BA0720>",
+                "start_time": "2025-06-30 12:54:51.507475",
+                "duration": "0:00:00.515104",
+                "node_func": "<function pull_redcap at 0x000002C7CD36AAF0>",
                 "node_inputs": {
                     "fields_list": [
                         "record_id",
@@ -85,20 +85,17 @@ Example provenance output:
                         "information_sheet_complete"
                     ],
                     "token": "read_token",
-                    "settings": {
-                        "process": "process_record"
-                    },
                     "redcap_url": "https://redcap.bumc.bu.edu/api/"
                 },
                 "script_path_in_repo": "qc_scripts\\redcap.py",
-                "commit_hash": "8c8113bf3d8f544f7c04bcb9b352b64d919e1ed9",
-                "remote_url": "https://github.com/Digital-Working-Group/qc_system.git"
+                "commit_hash": "0f718351a0906ac2b44bfa443d24e0daefbb4b30",
+                "remote_url": "https://github.com/Digital-Working-Group/dvoice-tracking-qc-system.git"
             },
             {
                 "node_name": "validate_redcap_entries",
-                "start_time": "2025-06-24 15:01:35.556854",
-                "duration": "0:00:00.001000",
-                "node_func": "<function validate_redcap_entries at 0x0000023634C36F20>",
+                "start_time": "2025-06-30 12:54:52.022579",
+                "duration": "0:00:00",
+                "node_func": "<function validate_redcap_entries at 0x000002C7CD36A9D0>",
                 "node_inputs": {
                     "required_fieldnames": [
                         "date_dc",
@@ -106,13 +103,13 @@ Example provenance output:
                     ]
                 },
                 "script_path_in_repo": "qc_scripts\\redcap.py",
-                "commit_hash": "8c8113bf3d8f544f7c04bcb9b352b64d919e1ed9",
-                "remote_url": "https://github.com/Digital-Working-Group/qc_system.git"
+                "commit_hash": "0f718351a0906ac2b44bfa443d24e0daefbb4b30",
+                "remote_url": "https://github.com/Digital-Working-Group/dvoice-tracking-qc-system.git"
             }
         ],
         "script_path_in_repo": "qc_pipelines.py",
-        "commit_hash": "8c8113bf3d8f544f7c04bcb9b352b64d919e1ed9",
-        "remote_url": "https://github.com/Digital-Working-Group/qc_system.git"
+        "commit_hash": "0f718351a0906ac2b44bfa443d24e0daefbb4b30",
+        "remote_url": "https://github.com/Digital-Working-Group/dvoice-tracking-qc-system.git"
     }
 }
 ```
@@ -372,17 +369,17 @@ main.compare_sources_and_duplicates()
 ```
 - This will result in 7 files:
     - `flag_pipeline_passed`: Files that passed all checks.
-    - `flag_pipeline_flagged_not_in_date_range_example`: Filename date occurred after the record_end_date.
+    - `flag_pipeline_flagged_not_in_date_range_example`: REDCap and filename match and the date occurred after the record_end_date.
         - Our sample data will flag DC02-61041_20250507 and BL01-06800_20251015.
     - `flag_pipeline_flagged_no_redcap_entry_example`: Filename id_date did not match those found in the REDCap records.
         - Also see [flagged/no_redcap_entry](flagged/no_redcap_entry/) for an Excel summary.
-        - Our sample data will flag DC02-58910_20250101.
+        - Our sample data will flag DC02-58910_20250101 and DS02-61041_20250407.
     - `flag_pipeline_flagged_tester_id_mismatch_example`: Filenames where the tester_id did not match those found in the REDCap records.
         - Also see [flagged/tester_id_mismatch](flagged/tester_id_mismatch/) for an Excel summary.
         - Our sample data will flag BL01-06800_20250220.
     - `flag_pipeline_duplicates`: Files with same id_date and same contents.
         - Our sample data will flag BL01-04952_20250218.
-    - `flag_pipelines_extra_files`: Files with same id_date in the filename.
+    - `flag_pipelines_extra_files`: Files with same id_date in the filename, but different contents.
         - Our sample data will flag BL01-04952_20250218.
     - `flag_pipelines_location_mismatch`: Filenames where the location did not match the location recorded on REDCap.
         - Our sample data will flag BL01-38126_20250108.
