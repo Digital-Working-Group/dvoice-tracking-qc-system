@@ -138,13 +138,12 @@ See [templates](templates/) for the template files you should copy. Copy each on
 
 ```json
 {
-    "clean_dataset": "YOUR CURRENT CLEAN DATASET",
+    "clean_dataset": "",
     "walk_pipeline_walk": "",
     "walk_pipeline_other_walk": "",
     "pull_sources_pipeline_redcap_records": "",
     "flag_pipeline_passed": "",
     "flag_pipeline_flagged_no_redcap_entry_example": "",
-    "flag_pipeline_flagged_not_in_date_range_example": "",
     "flag_pipeline_extra_files": "",
     "flag_pipeline_duplicates": "",
     "flag_pipeline_location_mismatch": "",
@@ -155,8 +154,6 @@ See [templates](templates/) for the template files you should copy. Copy each on
     "pull_sources_pipeline_fix_redcap": ""
 }
 ```
-
-Note that if you don't have a current clean datset yet, you may leave the value as an empty string.
 
 `main.py` will look identical to [main_template.py](templates/main_template.py).
 
@@ -251,17 +248,17 @@ If all of those checks pass, the we create a destination path for the file and a
 1. See `main.compare_sources_and_duplicates()`
     - See [Compare Sources and Duplicates](#compare-sources-and-duplicates) for a usage example.
 2. The kwarg *record_end_date* should be updated with the date that you want your QC to go through.
-2. This step accomplishes the following:
+    - Any filenames that match a REDCap record, but go beyond the record_end_date, will be filtered out
+3. This step accomplishes the following:
     - Compares id_dates in filenames to REDCap
         - If the file is within the date range but there is no match, the script creates an excel file for review.
-        - If the filename date occurs after the *record_end_date* due to a typo or the test occuring outside of the range, it will be flagged and caught in the *flag_pipeline_flagged_not_in_date_range_example* JSON. Review all filenames to make sure it was not flagged due to a typo.
     - Compares tech_ids to REDCap
         - Writes non-matches to an excel for review
     - Checks for duplicate files
     - Checks that one 1 file exists for each id_date
     - Verifies that filename and REDCap locations match
     - Writes destination paths for passed files
-3. Failure JSON files are generated and XLSX files containing information on id_date and tech_id REDCap mismatches. 
+4. Failure JSON files are generated and XLSX files containing information on id_date and tech_id REDCap mismatches. 
     - JSONs to check:
         - flag_pipeline_flagged_no_redcap_entry_example
         - flag_pipeline_flagged_tester_id_mismatch_example
@@ -273,8 +270,8 @@ If all of those checks pass, the we create a destination path for the file and a
         - flagged/no_redcap_entry
         - flagged/tester_id_mismatch
         - flagged/tester_id_no_redcap
-4. Filename errors should then be resolved.
-5. The script can be rerun after corrections are made until failures are solved.
+5. Filename errors should then be resolved.
+6. The script can be rerun after corrections are made until failures are solved.
 
 #### Keyword Arguments for compare_sources_and_duplicates()
 | variable name | type(s) | description | default value | optional |
