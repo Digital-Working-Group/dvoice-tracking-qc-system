@@ -18,7 +18,7 @@ def flatten(item, parent_key='', sep='_'):
             items.extend(flatten(v, new_key, sep=sep).items())
     elif isinstance(item, list):
         for i, v in enumerate(item):
-            new_key = f"{parent_key}{sep}{i}" if parent_key else str(i)
+            new_key = f"{parent_key}{sep}{i}" if parent_key else ''
             items.extend(flatten(v, new_key, sep=sep).items())
     else:
         items.append((parent_key, item))
@@ -64,6 +64,8 @@ def write_flagged_excel(input_data, **kwargs):
         return
 
     summary_df = flattened_to_df(input_data)
+    print(summary_df)
+    input()
     if 'nearest' in summary_df.columns:
         summary_df.drop('nearest', axis=1, inplace=True)
     summary_df['correction'] = 'NA'
