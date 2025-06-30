@@ -156,6 +156,8 @@ See [templates](templates/) for the template files you should copy. Copy each on
 }
 ```
 
+Note that if you don't have a current clean datset yet, you may leave the value as an empty string.
+
 `main.py` will look identical to [main_template.py](templates/main_template.py).
 
 `read_token.py` should have the `token_loc` variable edited to contain the filepath to a text file that has a single line containing your [REDCap API token](#redcap-api-access).
@@ -262,7 +264,6 @@ If all of those checks pass, the we create a destination path for the file and a
 3. Failure JSON files are generated and XLSX files containing information on id_date and tech_id REDCap mismatches. 
     - JSONs to check:
         - flag_pipeline_flagged_no_redcap_entry_example
-        - flag_pipeline_flagged_not_in_date_range_example
         - flag_pipeline_flagged_tester_id_mismatch_example
         - flag_pipeline_flagged_tester_id_no_redcap_example
         - flag_pipeline_extra_files
@@ -368,7 +369,7 @@ main.walk()
 import main
 main.compare_sources_and_duplicates()
 ```
-- This will result in 7 files:
+- This will result in 6 files:
     - `flag_pipeline_passed`: Files that passed all checks.
     - `flag_pipeline_flagged_no_redcap_entry_example`: Filename id_date did not match those found in the REDCap records.
         - Also see `flagged/no_redcap_entry` for an Excel summary.
