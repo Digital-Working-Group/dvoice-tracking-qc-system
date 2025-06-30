@@ -1,5 +1,5 @@
 {
-    "clean_dataset": "YOUR CURRENT CLEAN DATASET",
+    "clean_dataset": "",
     "walk_pipeline_walk": "",
     "walk_pipeline_other_walk": "",
     "pull_sources_pipeline_redcap_records": "",
