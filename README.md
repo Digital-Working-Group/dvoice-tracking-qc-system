@@ -124,12 +124,13 @@ pip install -r py3-13-1_requirements.txt
 
 See [templates](templates/) for the template files you should copy. Copy each one into your root folder and rename by removing *_template* from the filename. Fill in any filepaths, tokens, or URLs needed.
 
-`config.json` should be edited to contain the path to the root folder for the provenance logs (`prov_root`) and the API URL for your REDCap.
+`config.json` should be edited to contain the path to the root folder for the provenance logs (`prov_root`), the API URL for your REDCap, and the path to the root folder for the clean dataset.
 
 ```json
 {
     "prov_root": "provenance/",
-    "redcap_url": "https://redcap.bumc.bu.edu/api/"
+    "redcap_url": "https://redcap.bumc.bu.edu/api/",
+    "clean_root": "passed_data/clean_dataset"
 }
 ```
 
@@ -369,13 +370,11 @@ main.compare_sources_and_duplicates()
 ```
 - This will result in 7 files:
     - `flag_pipeline_passed`: Files that passed all checks.
-    - `flag_pipeline_flagged_not_in_date_range_example`: REDCap and filename match and the date occurred after the record_end_date.
-        - Our sample data will flag DC02-61041_20250507 and BL01-06800_20251015.
     - `flag_pipeline_flagged_no_redcap_entry_example`: Filename id_date did not match those found in the REDCap records.
-        - Also see [flagged/no_redcap_entry](flagged/no_redcap_entry/) for an Excel summary.
-        - Our sample data will flag DC02-58910_20250101 and DS02-61041_20250407.
+        - Also see `flagged/no_redcap_entry` for an Excel summary.
+        - Our sample data will flag DC02-58910_20250101, DS02-61041_20250407, DC02-61041_20250507 and BL01-06800_20251015.
     - `flag_pipeline_flagged_tester_id_mismatch_example`: Filenames where the tester_id did not match those found in the REDCap records.
-        - Also see [flagged/tester_id_mismatch](flagged/tester_id_mismatch/) for an Excel summary.
+        - Also see `flagged/tester_id_mismatch` for an Excel summary.
         - Our sample data will flag BL01-06800_20250220.
     - `flag_pipeline_duplicates`: Files with same id_date and same contents.
         - Our sample data will flag BL01-04952_20250218.

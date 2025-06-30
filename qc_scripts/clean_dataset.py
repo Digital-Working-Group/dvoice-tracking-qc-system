@@ -5,8 +5,12 @@ methods for accessing and updating the clean dataset
 import os
 import shutil
 import json
+from collections import defaultdict
+from pathlib import Path
 from tqdm import tqdm
+from qc_scripts.utility.get_latest_data import get_root_fp
 from qc_scripts.utility.read import read_dictionary_file
+from qc_scripts.logger import edit_static_json
 
 def deduplicate_by_src(dict_list):
     """
@@ -32,14 +36,23 @@ def update_clean_dataset(input_data, **kwargs):
     if isinstance(input_data, str):
         input_data = read_dictionary_file(input_data)
 
-    ## make a copy of the current clean_dataset
-    dir_name, filename = os.path.split(clean_dataset)
-    name, ext = os.path.splitext(filename)
-    copy_name = os.path.join(dir_name, f'{name}_previous{ext}')
-    shutil.copy2(clean_dataset, copy_name)
+    ## If a clean dataset currently exists
+    if clean_dataset != "":
+        ## make a copy of the current clean_dataset
+        dir_name, filename = os.path.split(clean_dataset)
+        name, ext = os.path.splitext(filename)
+        copy_name = os.path.join(dir_name, f'{name}_previous{ext}')
+        shutil.copy2(clean_dataset, copy_name)
 
-    ## read clean_dataset
-    updated_clean = read_dictionary_file(clean_dataset)
+        ## read clean_dataset
+        updated_clean = read_dictionary_file(clean_dataset)
+    
+    ## Clean dataset doesn't exist yet
+    else:
+        updated_clean = defaultdict(list)
+        clean_root = get_root_fp('clean_root')
+        clean_dataset = f'{clean_root}/clean_dataset.json'
+        Path(clean_dataset).parent.mkdir(parents=True, exist_ok=True)
 
     ## add new data to the clean dataset 
     for id_date, data in tqdm(input_data.items()):
@@ -56,3 +69,4 @@ def update_clean_dataset(input_data, **kwargs):
     with open(clean_dataset, 'w', encoding='utf-8') as f:
         json.dump(updated_clean, f, indent=4)
     print(f'See {clean_dataset} for updated clean dataset.')
+    edit_static_json('static.json', clean_dataset, f"clean_dataset")

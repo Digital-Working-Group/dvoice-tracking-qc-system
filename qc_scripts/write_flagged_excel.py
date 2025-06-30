@@ -64,8 +64,6 @@ def write_flagged_excel(input_data, **kwargs):
         return
 
     summary_df = flattened_to_df(input_data)
-    print(summary_df)
-    input()
     if 'nearest' in summary_df.columns:
         summary_df.drop('nearest', axis=1, inplace=True)
     summary_df['correction'] = 'NA'

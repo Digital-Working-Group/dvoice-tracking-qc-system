@@ -10,7 +10,6 @@ from qc_scripts.utility.read import read_dictionary_file
 def flag_id_date(input_data, **kwargs):
     """
     Compare id_dates in filenames to the records we have from redcap
-    Inputs:
 
     """
     ## Get kwargs
@@ -31,7 +30,6 @@ def flag_id_date(input_data, **kwargs):
 
     redcap_id_dates = list(redcap_entries.keys())
     flagged_no_redcap_entry = {}
-    flagged_not_in_date_range = {}
     passed = {}
         
     # checks our dvrs to see if they have a redcap entry
@@ -41,34 +39,28 @@ def flag_id_date(input_data, **kwargs):
             if id_date in ignore_flagged:
                 passed[id_date] = data
                 continue
-            try:
-                date_of_file = datetime.strptime(data[0]['date'], "%Y%m%d").date()
-            except ValueError:
-                flagged_not_in_date_range[id_date] = data
-            if date_of_file > record_end_date:
-                flagged_not_in_date_range[id_date] = data
-            else:
-                nearest = []
-                # data =  get_creation_time(data)
-                for idd in redcap_id_dates:
-                    if data[0]['pid'] in idd:
-                        for i in data:
-                            try:
-                                idd_date = datetime.strptime(idd.split('_')[-1], "%Y%m%d").date()
-                                difference = abs((idd_date - date_of_file).days)
-                            except ValueError:
-                                difference = 'Error'
-                            ra = redcap_entries[idd][rc_tester_id_fieldname]
-                            date = redcap_entries[idd][rc_date_fieldname].replace('-', '')
-                            nearest.append({'id_date': idd, 'date': date, 'difference': difference, 'tester_id_completing': ra})
-                            i['nearest'] = nearest
+            nearest = []
+            # data =  get_creation_time(data)
+            for idd in redcap_id_dates:
+                if data[0]['pid'] in idd:
+                    for i in data:
+                        try:
+                            idd_date = datetime.strptime(idd.split('_')[-1], "%Y%m%d").date()
+                            difference = abs((idd_date - date_of_file).days)
+                        except ValueError:
+                            difference = 'Error'
+                        ra = redcap_entries[idd][rc_tester_id_fieldname]
+                        date = redcap_entries[idd][rc_date_fieldname].replace('-', '')
+                        nearest.append({'id_date': idd, 'date': date, 'difference': difference, 'tester_id_completing': ra})
+                        i['nearest'] = nearest
 
-                flagged_no_redcap_entry[id_date] = data
+            flagged_no_redcap_entry[id_date] = data
         else:
-            passed[id_date] = data
+            date_of_file = datetime.strptime(data[0]['date'], "%Y%m%d").date()
+            if date_of_file <= record_end_date:
+                passed[id_date] = data
     return [{'final': passed, "ext": "passed"},
-            {'final': flagged_no_redcap_entry, "ext": f"flagged_no_redcap_entry_{ext}"},
-            {'final': flagged_not_in_date_range, "ext": f"flagged_not_in_date_range_{ext}"}]
+            {'final': flagged_no_redcap_entry, "ext": f"flagged_no_redcap_entry_{ext}"}]
 
 def flag_tester_id(input_data, **kwargs):
     """

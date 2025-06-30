@@ -92,9 +92,9 @@ def compare_sources_and_duplicates():
                              **{'flag_type': 'no_redcap_entry', 'ext': 'example'}))
         .add_node(FilterNode(func=flag_tester_id, **kwargs))
         .add_node(ActionNode(func=write_flagged_excel, input_keys=['flagged_tester_id_mismatch_example'],
-                             **{'flag_type': 'tester_id_mismatch', 'ext': 'video'}))
+                             **{'flag_type': 'tester_id_mismatch', 'ext': 'example'}))
         .add_node(ActionNode(func=write_flagged_excel, input_keys=['flagged_tester_id_no_redcap_example'],
-                             **{'flag_type': 'tester_id_no_redcap', 'ext': 'video'}))
+                             **{'flag_type': 'tester_id_no_redcap', 'ext': 'example'}))
         .add_node(FilterNode(func=clean_duplicates, **duplicate_kwargs))
         .add_node(FilterNode(func=flag_file_count))
         .add_node(FilterNode(func=check_location, **{'redcap_entries': redcap_entries}))
