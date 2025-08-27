@@ -60,6 +60,5 @@ def clean_duplicates(input_data, **kwargs):
                 duplicates[id_date] = item2
                 data.remove(item2)
         input_data[id_date] = unique
-
     return [{'final': input_data, "ext": "passed"},
             {'final': duplicates, "ext": "duplicates"}]

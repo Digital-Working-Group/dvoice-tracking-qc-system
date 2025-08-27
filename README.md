@@ -4,7 +4,7 @@ This repository contains an outline to set up QC (quality control) pipelines and
 
 | Table of Contents |
 |---|
-| [REDCap Details](#redcap-details) |
+| [Record Database Details](#record-database-details) |
 | [Repository Contents](#repository-contents) |
 | [Provenance and Logging](#provenance-and-logging) |
 | [Installation and Setup](#installation-and-setup) |
@@ -12,8 +12,21 @@ This repository contains an outline to set up QC (quality control) pipelines and
 | [Usage Example](#usage-example) |
 | [Citations](#citations) |
 
-# REDCap Details
-## Project Structure
+# Record Database Details
+The example QC scripts are designed to ingest a CSV or to pull from REDCap using an API token. To run the QC pipelines, you only need one database for comparison, but both options are outlined below.
+
+## CSV Structure
+The CSV is structured to be similar to the export from a REDCap project with only one form ("Information Sheet"). The columns of the CSV are described below:
+| Fieldname | Description | Example |
+|---|---|---|
+| record_id | Record ID for that data. For our testing, we chose a format consisting of a Cohort Code (two letters and two numbers) and a Participant ID (five numbers). All record ids are samples only. | AB0012345 |
+| date_dc | The date the data was captured (YYYY-MM-DD) | 2025-05-29 |
+| tester_id | ID of the tester. | 123 |
+| data_loc | The location where the data was collected. | remote |
+
+For an example, see [sample_csv_database.csv](sample_data/sample_csv_database.csv).
+
+## REDCap Project Structure
 To build out your own QC System, see [ProjectStructureExample.REDCap.xml](redcap_example/ProjectStructureExample.REDCap.xml) for a sample REDCap structure. To create a new REDCap project via importing a REDCap XML file, see the [REDCap Setup](#redcap-setup) section for more detailed information.
 
 This project structure has only one form ("Information Sheet") with fields described below:
@@ -33,9 +46,9 @@ To familiarize yourself with this repository, consider exploring:
 - [qc_pipelines.py](qc_scripts/qc_pipelines.py): combines scripts by inputting them as nodes to pipelines to build out the structure of the QC
 - [stream.py](qc_scripts/stream.py): holds the Pipeline and Node class structures
 - [logger.py](qc_scripts/logger.py): handles the saving and logging of pipeline results
-- [redcap.py](qc_scripts/redcap.py): handles pulling and validating REDCap records
+- [records.py](qc_scripts/records.py): handles ingesting and formatting records from a database
 - [walk.py](qc_scripts/walk.py): walk functions to collect files
-- [compare_redcap.py](qc_scripts/compare_redcap.py): functions to compare filename information to REDCap field data
+- [compare_records.py](qc_scripts/compare_records.py): functions to compare filename information to record field data
 - [write_flagged_excel.py](qc_scripts/write_flagged_excel.py): writes excel files for manual review
 - [duplicates.py](qc_scripts/duplicates.py): functions to check for duplicates or too many file occurrences
 - [destination.py](qc_scripts/destination.py): functions to define destination of files that passed all checks
@@ -141,22 +154,24 @@ See [templates](templates/) for the template files you should copy. Copy each on
     "clean_dataset": "",
     "walk_pipeline_walk": "",
     "walk_pipeline_other_walk": "",
-    "pull_sources_pipeline_redcap_records": "",
+    "csv_records_pipeline_csv_records": "",
     "flag_pipeline_passed": "",
-    "flag_pipeline_flagged_no_redcap_entry_example": "",
+    "flag_pipeline_flagged_no_records_example": "",
     "flag_pipeline_extra_files": "",
     "flag_pipeline_duplicates": "",
     "flag_pipeline_location_mismatch": "",
     "flag_pipeline_flagged_tester_id_mismatch_example": "",
-    "flag_pipeline_flagged_tester_id_no_redcap_example": "",
+    "flag_pipeline_flagged_tester_id_no_records_example": "",
     "move_pipeline_move": "",
     "move_pipeline_move_move_back": "",
-    "pull_sources_pipeline_fix_redcap": ""
+    "csv_records_pipeline_fix_records": ""
 }
 ```
 
 `main.py` will look identical to [main_template.py](templates/main_template.py).
 
+## REDCap Setup
+If you are using a REDCap project as your database, you will also need to save your API token.
 `read_token.py` should have the `token_loc` variable edited to contain the filepath to a text file that has a single line containing your [REDCap API token](#redcap-api-access).
 
 ```py
@@ -181,12 +196,12 @@ The token text file should look like the below, where TOKEN_VALUE is replaced by
 ```txt
 TOKEN_VALUE
 ```
-## REDCap Setup
+### REDCap Project Setup
 1. Select **New Project**.
 2. For the **Project creation option** select *Upload a REDCap project XML file (CDISC ODM format)*. If you would like to use our structure but create your own sample data, use [ProjectStructureExample.REDCAP.xml](redcap_example/ProjectStructureExample.REDCap.xml) or upload with our sample data using [ProjectStructure_with_data.xml](redcap_example/ProjectStructure_with_data.xml).
 3. Click **Create Project**.
 
-## REDCap API Access
+### REDCap API Access
 To gain API access, you'll need to request a token. To do so:
 1. Open your REDCap project.
 2. Select **User Rights** from the side menu.
@@ -196,13 +211,27 @@ To gain API access, you'll need to request a token. To do so:
 6. Click **Request API token**. You will recieve an email when your REDCap administrator has approved your request.
 7. Once approved, return to **API** from the side menu and you will now see your token. Copy that token and put it in a text file.
 8. In `read_token.py`, assign `token_loc` to be the path to the text file holding your REDCap token.
+9. In your `config.json`, update your `redcap_url` key to hold your REDCap API URL.
 
 # QC Steps
 ### Prepare comparison sources
-Our example only compares to REDCap, but you may wish to add additional nodes to compare with other data sources.
+Our example compares to the [records database CSV](sample_data/sample_csv_database.csv) described above, but you may optionally use REDCap instead.
+1. See `main.csv_records()`.
+    - This reads data from the CSV and reformats it to be keyed by id_date.
+    - It then validates the data by checking that the required fields have data.
+
+#### Keyword Arguments for csv_records()
+| variable name | type(s) | description | default value | optional |
+|---|---|---|---|---|
+| csv_filepath | str| Filepath to your records CSV. | No | No |
+| required_fieldnames | list | Fields that require a value. | [] | Yes |
+| ext | str | filename extension. | "validated_records" | Yes |
+
+### Optional: Use REDCap instead of a CSV
+To compare to REDCap instead, you will need to one slight changes to the predefined KWARGS:
+    - In `qc_pipelines.compare_sources_and_duplicates()`, change records to grab the filepath associated with the key `pull_sources_pipeline_redcap_records`.
 1. See `main.pull_comparison_sources()`.
     - This pulls data from REDCap and reformats it to be keyed by id_date.
-    - See [Pull REDCap Data](#pull-redcap-data) for a usage example.
 
 #### Keyword Arguments for pull_comparison_sources()
 | variable name | type(s) | description | default value | optional |
@@ -210,6 +239,8 @@ Our example only compares to REDCap, but you may wish to add additional nodes to
 | fields_list | list | Fields to pull from REDCap. | [] | No |
 | token | func | Method that gets token. | No default | No |
 | redcap_url | str| REDCap API URL for your project. | No | No |
+| required_fieldnames | list | Fields that require a value. | [] | Yes |
+| ext | str | filename extension. | "validated_records" | Yes |
 
 ### Walk
 This step walks over a predefined folder and outputs JSONs to describe files found that matched the walk parameters and all other files found in the given directory (excluding anything from the ignore_list).
@@ -234,42 +265,42 @@ This step walks over a predefined folder and outputs JSONs to describe files fou
 | walk_kwargs | dict | Any additional walk kwargs. | {} | Yes |
 
 ### Compare sources and duplicates
-This step filters based on some example criteria to ensure that the filenames match the data recorded on REDCap and that there are no extra or duplicate files.
+This step filters based on some example criteria to ensure that the filenames match the data recorded and that there are no extra or duplicate files.
 
 The specific steps used in this example include:
-- Checking that the id_date exists on REDCap.
-- Checking that the tester_id matches the one recorded on REDCap.
+- Checking that the id_date exists in the record.
+- Checking that the tester_id matches the one recorded in the record.
 - Checking that no duplicate files exist.
 - Checking that no extra files exist.
-- Checking that the location in the filename matches the location recorded on REDCap.
+- Checking that the location in the filename matches the location recorded in the record.
 
 If all of those checks pass, the we create a destination path for the file and add it to the dictionary. JSONs are written for the passed files as well as failures at each node in the pipeline.
 
 1. See `main.compare_sources_and_duplicates()`
     - See [Compare Sources and Duplicates](#compare-sources-and-duplicates) for a usage example.
 2. The kwarg *record_end_date* should be updated with the date that you want your QC to go through.
-    - Any filenames that match a REDCap record, but go beyond the record_end_date, will be filtered out
+    - Any filenames that match a record, but go beyond the record_end_date, will be filtered out
 3. This step accomplishes the following:
-    - Compares id_dates in filenames to REDCap
+    - Compares id_dates in filenames to the records
         - If the file is within the date range but there is no match, the script creates an excel file for review.
-    - Compares tech_ids to REDCap
+    - Compares tech_ids to records
         - Writes non-matches to an excel for review
     - Checks for duplicate files
     - Checks that 1 file exists for each id_date
-    - Verifies that filename and REDCap locations match
+    - Verifies that filename and record locations match
     - Writes destination paths for passed files
-4. Failure JSON files are generated and XLSX files containing information on id_date and tech_id REDCap mismatches. 
+4. Failure JSON files are generated and XLSX files containing information on id_date and tech_id record mismatches. 
     - JSONs to check:
-        - flag_pipeline_flagged_no_redcap_entry_example
+        - flag_pipeline_flagged_no_records_example
         - flag_pipeline_flagged_tester_id_mismatch_example
-        - flag_pipeline_flagged_tester_id_no_redcap_example
+        - flag_pipeline_flagged_tester_id_no_records_example
         - flag_pipeline_extra_files
         - flag_pipeline_duplicates
         - flag_pipeline_location_mismatch
     - XLSXs to check (only written if they are not empty):
-        - flagged/no_redcap_entry
+        - flagged/no_records_entry
         - flagged/tester_id_mismatch
-        - flagged/tester_id_no_redcap
+        - flagged/tester_id_no_records
 5. Filename errors should then be resolved.
 6. The script can be rerun after corrections are made until failures are solved.
 
@@ -277,9 +308,9 @@ If all of those checks pass, the we create a destination path for the file and a
 | variable name | type(s) | description | default value | optional |
 |---|---|---|---|---|
 | record_end_date | datetime | Cut-off date to check. | today | Yes |
-| rc_tech_id_fieldname | str | REDCap fieldname from PVT. | No default | No |
-| rc_date_fieldname | str | REDCap date fieldname from PVT. | No default | No |
-| redcap_entries | str | Path to REDCap pull from step_0. | No default | No |
+| rc_tech_id_fieldname | str | Record tech id fieldname. | No default | No |
+| rc_date_fieldname | str | Record date fieldname. | No default | No |
+| records | str | Path to CSV or REDCap records in JSON format. | No default | No |
 | ext | str | Filename extension (in this case, media type). | No default | Yes |
 
 ### Move and update
@@ -325,24 +356,19 @@ The sample data provided to run the QC can be found in [sample_data](sample_data
 ```
 
 ## Sample QC Walkthrough
-
-To follow along with this walkthrough, make sure that you have set up your example REDCap according to the [instructions above](#redcap-setup).
 Note that all resulting JSONs are referenced by their key in `static.json` as individual filenames will change.
 
 This example contains commands to run each step in an interactive python shell, but you may also run each step my running main.py and commenting/uncommenting each method call. 
 
-### Pull REDCap Data
-1. Ensure that you have edited your `read_token.py` file to read in your REDCap API token.
-2. In your `config.json`, update your `redcap_url` key to hold your REDCap API URL.
-    - For example, the BUMC REDCap URL is `https://redcap.bumc.bu.edu/api/`.
-3. Run the following commands:
+### Read CSV Records
+1. Run the following commands:
 ```python
 import main
-main.pull_comparison_sources()
+main.csv_records()
 ```
 - This will result in two files:
-    - `pull_sources_pipeline_redcap_records`: All records pulled from REDCap
-    - `pull_sources_pipeline_fix_redcap`: Entries that need to be reviewed and corrected on REDCap. Our sample data should flag the record_id DC265 and DC0212432.
+    - `csv_records_pipeline_csv_records`: All records read from the CSV.
+    - `csv_records_pipeline_fix_record`: Records that need to be reviewed and corrected. Our sample data should flag the record_id DC265 and DC0212432.
 
 ### Walk Sample Data
 1. Run the following commands:
@@ -368,17 +394,17 @@ main.compare_sources_and_duplicates()
 ```
 - This will result in 6 files:
     - `flag_pipeline_passed`: Files that passed all checks.
-    - `flag_pipeline_flagged_no_redcap_entry_example`: Filename id_date did not match those found in the REDCap records.
-        - Also see `flagged/no_redcap_entry` for an Excel summary.
+    - `flag_pipeline_flagged_no_records_example`: Filename id_date did not match those found in the records.
+        - Also see `flagged/no_records_entry` for an Excel summary.
         - Our sample data will flag DC02-58910_20250101, DS02-61041_20250407, DC02-61041_20250507 and BL01-06800_20251015.
-    - `flag_pipeline_flagged_tester_id_mismatch_example`: Filenames where the tester_id did not match those found in the REDCap records.
+    - `flag_pipeline_flagged_tester_id_mismatch_example`: Filenames where the tester_id did not match those found in the records.
         - Also see `flagged/tester_id_mismatch` for an Excel summary.
         - Our sample data will flag BL01-06800_20250220.
     - `flag_pipeline_duplicates`: Files with same id_date and same contents.
         - Our sample data will flag BL01-04952_20250218.
     - `flag_pipelines_extra_files`: Files with same id_date in the filename, but different contents.
         - Our sample data will flag BL01-04952_20250218.
-    - `flag_pipelines_location_mismatch`: Filenames where the location did not match the location recorded on REDCap.
+    - `flag_pipelines_location_mismatch`: Filenames where the location did not match the location recorded in the records.
         - Our sample data will flag BL01-38126_20250108.
 
 ### Move and Update the Clean Dataset

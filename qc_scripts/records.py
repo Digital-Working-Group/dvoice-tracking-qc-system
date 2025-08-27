@@ -1,11 +1,27 @@
 """
-pull_redcap.py
-methods involving pulling redcap data
+records.py
+methods involving pulling, reading, or validating data from a REDCap or csv of records
 """
+import csv
 import requests
 from collections import defaultdict
 from qc_scripts.utility.read import read_dictionary_file
 from qc_scripts.utility.id_validation import redcap_to_pid
+
+def read_csv_records(**kwargs):
+    """
+    Reads data from csv
+    """
+    csv_filepath = kwargs.get('csv_filepath')
+    ext = kwargs.get('ext', 'csv_records')
+    data = []
+
+    with open(csv_filepath, 'r', newline='') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            data.append(row)
+
+    return[{'final': data, 'ext': ext}]
 
 def get_data_request(token, fields_list):
     """
@@ -47,17 +63,17 @@ def pull_redcap(**kwargs):
     req_js = requests.post(redcap_url, data=data, timeout=10).json()
     return [{'final': req_js, 'ext': ext}]
 
-def validate_redcap_entries(input_data, **kwargs):
+def validate_records(input_data, **kwargs):
     """
     Checks that id/idtypes match the schema and that the required fields are filled out
     """
     required_fieldnames = kwargs.get('required_fieldnames', [])
-    ext = kwargs.get('ext', 'redcap_records')
+    ext = kwargs.get('ext', 'validated_records')
 
     if isinstance(input_data, str):
         input_data = read_dictionary_file(input_data)
 
-    redcap_records = defaultdict(lambda: defaultdict(str)) 
+    records = defaultdict(lambda: defaultdict(str)) 
     invalid_id = []
     missing_fields = []
 
@@ -78,8 +94,8 @@ def validate_redcap_entries(input_data, **kwargs):
                     break
             if has_missing:
                 continue
-            redcap_records[key] = i
+            records[key] = i
 
-    fix_redcap = {'invalid_id': invalid_id, 'missing_fields': missing_fields}
-    return[{'final': fix_redcap, 'ext': 'fix_redcap'},
-           {'final': redcap_records, 'ext': ext}]
+    fix_record= {'invalid_id': invalid_id, 'missing_fields': missing_fields}
+    return[{'final': fix_record, 'ext': 'fix_record'},
+           {'final': records, 'ext': ext}]
