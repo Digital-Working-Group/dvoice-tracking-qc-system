@@ -77,53 +77,44 @@ Our current implementation captures the following:
 Example provenance output:
 ```json
 {
-    "0": {
-        "pipeline_name": "pull_sources_pipeline",
-        "start_time": "2025-06-30 12:54:51.507475",
-        "duration": "0:00:00.515104",
-        "func_name": "pull_comparison_sources",
-        "pipeline_input": {},
-        "nodes": [
-            {
-                "node_name": "pull_redcap",
-                "start_time": "2025-06-30 12:54:51.507475",
-                "duration": "0:00:00.515104",
-                "node_func": "<function pull_redcap at 0x000002C7CD36AAF0>",
-                "node_inputs": {
-                    "fields_list": [
-                        "record_id",
-                        "date_dc",
-                        "tester_id",
-                        "data_loc",
-                        "information_sheet_complete"
-                    ],
-                    "token": "read_token",
-                    "redcap_url": "https://redcap.bumc.bu.edu/api/"
-                },
-                "script_path_in_repo": "qc_scripts\\redcap.py",
-                "commit_hash": "0f718351a0906ac2b44bfa443d24e0daefbb4b30",
-                "remote_url": "https://github.com/Digital-Working-Group/dvoice-tracking-qc-system.git"
+    "commit_hash": "c6f678cae97c63175b4dc7f537548dcd5f88b758",
+    "duration": "0:00:00.062552",
+    "func_name": "csv_records",
+    "nodes": [
+        {
+            "commit_hash": "c6f678cae97c63175b4dc7f537548dcd5f88b758",
+            "duration": "0:00:00.061971",
+            "node_func": "<function read_csv_records at 0x000001FB70AD71A0>",
+            "node_inputs": {
+                "csv_filepath": "sample_data/sample_csv_database.csv"
             },
-            {
-                "node_name": "validate_redcap_entries",
-                "start_time": "2025-06-30 12:54:52.022579",
-                "duration": "0:00:00",
-                "node_func": "<function validate_redcap_entries at 0x000002C7CD36A9D0>",
-                "node_inputs": {
-                    "required_fieldnames": [
-                        "date_dc",
-                        "data_loc"
-                    ]
-                },
-                "script_path_in_repo": "qc_scripts\\redcap.py",
-                "commit_hash": "0f718351a0906ac2b44bfa443d24e0daefbb4b30",
-                "remote_url": "https://github.com/Digital-Working-Group/dvoice-tracking-qc-system.git"
-            }
-        ],
-        "script_path_in_repo": "qc_pipelines.py",
-        "commit_hash": "0f718351a0906ac2b44bfa443d24e0daefbb4b30",
-        "remote_url": "https://github.com/Digital-Working-Group/dvoice-tracking-qc-system.git"
-    }
+            "node_name": "read_csv_records",
+            "remote_url": "https://github.com/Digital-Working-Group/qc_system.git",
+            "script_path_in_repo": "qc_scripts\\records.py",
+            "start_time": "2025-08-27 14:47:40.838339"
+        },
+        {
+            "commit_hash": "c6f678cae97c63175b4dc7f537548dcd5f88b758",
+            "duration": "0:00:00.000556",
+            "node_func": "<function validate_records at 0x000001FB72BA7920>",
+            "node_inputs": {
+                "ext": "csv_records",
+                "required_fieldnames": [
+                    "date_dc",
+                    "data_loc"
+                ]
+            },
+            "node_name": "validate_records",
+            "remote_url": "https://github.com/Digital-Working-Group/qc_system.git",
+            "script_path_in_repo": "qc_scripts\\records.py",
+            "start_time": "2025-08-27 14:47:40.900322"
+        }
+    ],
+    "pipeline_input": {},
+    "pipeline_name": "csv_records_pipeline",
+    "remote_url": "https://github.com/Digital-Working-Group/qc_system.git",
+    "script_path_in_repo": "qc_pipelines.py",
+    "start_time": "2025-08-27 14:47:40.838331"
 }
 ```
 
