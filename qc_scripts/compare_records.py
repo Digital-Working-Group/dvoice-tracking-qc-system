@@ -34,13 +34,14 @@ def flag_id_date(input_data, **kwargs):
         
     # checks our dvrs to see if they have a record
     for id_date, data in tqdm(input_data.items()):
+        ## get file date
+        date_of_file = datetime.strptime(id_date.split('_')[-1], "%Y%m%d").date()
         ## add in validate fid
         if id_date not in record_id_dates:
             if id_date in ignore_flagged:
                 passed[id_date] = data
                 continue
             nearest = []
-            # data =  get_creation_time(data)
             for idd in record_id_dates:
                 if data[0]['pid'] in idd:
                     for i in data:
@@ -56,7 +57,6 @@ def flag_id_date(input_data, **kwargs):
 
             flagged_no_record[id_date] = data
         else:
-            date_of_file = datetime.strptime(data[0]['date'], "%Y%m%d").date()
             if date_of_file <= record_end_date:
                 passed[id_date] = data
                 
