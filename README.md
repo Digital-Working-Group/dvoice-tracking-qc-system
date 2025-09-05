@@ -297,8 +297,12 @@ If all of those checks pass, the we create a destination path for the file and a
 
 1. See `main.compare_sources_and_duplicates()`
     - See [Compare Sources and Duplicates](#compare-sources-and-duplicates) for a usage example.
-2. The kwarg *record_end_date* should be updated with the date that you want your QC to go through.
-    - Any filenames that match a record, but go beyond the record_end_date, will be filtered out
+2. Parameters of note (see CMP_KWARGS in `main.py`):
+    - *record_end_date* should be updated with the date that you want your QC to go through.
+        - 2025-04-30 was used for our sample output runs, the default is the current date.
+        - Any filenames that match a record, but go beyond the record_end_date, will be filtered out.
+    - *duplicate_root* should be updated with the desired root folder to move duplicate files to.
+    - *move_back* should be updated to False (move from their original location to the destination) or True (move from their destination back to their original location) based on the need.
 3. This step accomplishes the following:
     - Compares id_dates in filenames to the records
         - If the file is within the date range but there is no match, the script creates an excel file for review.
@@ -326,11 +330,11 @@ If all of those checks pass, the we create a destination path for the file and a
 #### Keyword Arguments for compare_sources_and_duplicates()
 | variable name | type(s) | description | default value | optional |
 |---|---|---|---|---|
-| record_end_date | datetime | Cut-off date to check. | today | Yes |
-| rc_tech_id_fieldname | str | Record tech id fieldname. | No default | No |
-| rc_date_fieldname | str | Record date fieldname. | No default | No |
-| records | str | Path to CSV or REDCap records in JSON format. | No default | No |
-| ext | str | Filename extension (in this case, media type). | No default | Yes |
+| record_end_date | datetime | Cut-off date to check. | The current date | Yes |
+| rc_tech_id_fieldname | str | Record tech id fieldname. | 'tester_id'| No |
+| rc_date_fieldname | str | Record date fieldname. | 'date_dc' | No |
+| records | str | Path to CSV or REDCap records in JSON format. | Output JSON from csv_records() | No |
+| ext | str | Filename extension to the output flag excel files.| 'example' | Yes |
 
 ### Move and update
 1. See `main.move_and_update()`.
