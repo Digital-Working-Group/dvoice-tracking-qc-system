@@ -236,13 +236,14 @@ Our example compares to the [records database CSV](sample_data/sample_csv_databa
 1. See `main.csv_records()`.
     - This reads data from the CSV and reformats it to be keyed by id_date.
     - It then validates the data by checking that the required fields have data.
+    - Change the `csv_filepath` argument within CSV_RECORDS_KW in `main.py` to target the correct input CSV.
 
 #### Keyword Arguments for csv_records()
 | variable name | type(s) | description | default value | optional |
 |---|---|---|---|---|
-| csv_filepath | str| Filepath to your records CSV. | No | No |
-| required_fieldnames | list | Fields that require a value. | [] | Yes |
-| ext | str | filename extension. | "validated_records" | Yes |
+| csv_filepath | str| Filepath to your records CSV. | sample_data/sample_csv_database.csv | No |
+| required_fieldnames | list | Fields that require a value. | ['date_dc', 'data_loc'] | Yes |
+| ext | str | filename extension. | "csv_records" | Yes |
 
 ### REDCap Project and API (Comparison Source: Option #2)
 To compare to REDCap instead, you will need to one slight changes to the predefined KWARGS:
