@@ -171,6 +171,7 @@ from qc_pipelines import pull_comparison_sources, walk, compare_sources_and_dupl
 if __name__ == '__main__':
     csv_records()
     pull_comparison_sources()
+    ## Run only csv_records() [option #1] OR pull_comparison_sources() [option #2]
     walk()
     compare_sources_and_duplicates()
     move_and_update()
@@ -220,7 +221,11 @@ To gain API access, you'll need to request a token. To do so:
 9. In your `config.json`, update your `redcap_url` key to hold your REDCap API URL.
 
 # QC Steps
-### Prepare comparison sources
+
+## Prepare Comparison Sources
+Please use Option #1 (main.csv_records()) OR Option #2 (main.pull_comparison_sources()) to use an Input CSV or a REDCap project respectively as the comparison source.
+
+### Input CSV (Comparison Source: Option #1)
 Our example compares to the [records database CSV](sample_data/sample_csv_database.csv) described above, but you may optionally use REDCap instead.
 1. See `main.csv_records()`.
     - This reads data from the CSV and reformats it to be keyed by id_date.
@@ -233,7 +238,7 @@ Our example compares to the [records database CSV](sample_data/sample_csv_databa
 | required_fieldnames | list | Fields that require a value. | [] | Yes |
 | ext | str | filename extension. | "validated_records" | Yes |
 
-### Optional: Use REDCap instead of a CSV
+### REDCap Project and API (Comparison Source: Option #2)
 To compare to REDCap instead, you will need to one slight changes to the predefined KWARGS:
     - In `qc_pipelines.compare_sources_and_duplicates()`, change records to grab the filepath associated with the key `pull_sources_pipeline_redcap_records`.
 1. See `main.pull_comparison_sources()`.
@@ -248,7 +253,7 @@ To compare to REDCap instead, you will need to one slight changes to the predefi
 | required_fieldnames | list | Fields that require a value. | [] | Yes |
 | ext | str | filename extension. | "validated_records" | Yes |
 
-### Walk
+## Walk
 This step walks over a predefined folder and outputs JSONs to describe files found that matched the walk parameters and all other files found in the given directory (excluding anything from the ignore_list).
 
 1. See `main.walk()`.
