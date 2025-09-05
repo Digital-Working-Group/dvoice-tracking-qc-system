@@ -100,7 +100,6 @@ def compare_sources_and_duplicates():
         'ext': 'example'
     }
 
-    ## Not being used - check with Cody if we want to be moving the duplicates
     duplicate_kwargs = {
         'duplicate_root': 'sample_data/duplicates/'
     }
