@@ -115,12 +115,12 @@ def compare_sources_and_duplicates(**kwargs):
         .update_state('walk_passed', gld.get_filepath('walk_pipeline_walk'))
         .add_node(FilterNode(func=flag_id_date, input_key='walk_passed', **flag_kwargs))
         .add_node(ActionNode(func=write_flagged_excel, input_keys=['flagged_no_redcap_entry_example'],
-                             **{'flag_type': 'no_records_entry', 'ext': 'example'}))
+                             **{'flag_type': 'no_records_entry', 'ext': flag_kwargs['ext']}))
         .add_node(FilterNode(func=flag_tester_id, **flag_kwargs))
         .add_node(ActionNode(func=write_flagged_excel, input_keys=['flagged_tester_id_mismatch_example'],
-                             **{'flag_type': 'tester_id_mismatch', 'ext': 'example'}))
+                             **{'flag_type': 'tester_id_mismatch', 'ext': flag_kwargs['ext']}))
         .add_node(ActionNode(func=write_flagged_excel, input_keys=['flagged_tester_id_no_redcap_example'],
-                             **{'flag_type': 'tester_id_no_records', 'ext': 'example'}))
+                             **{'flag_type': 'tester_id_no_records', 'ext': flag_kwargs['ext']}))
         .add_node(FilterNode(func=clean_duplicates, **duplicate_kwargs))
         .add_node(ActionNode(func=move_files, input_keys=['duplicates'], **move_kwargs))
         .add_node(FilterNode(func=flag_file_count))
