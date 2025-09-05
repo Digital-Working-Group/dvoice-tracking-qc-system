@@ -128,7 +128,7 @@ def compare_sources_and_duplicates(**kwargs):
         .add_node(FilterNode(func=get_dst))
     ).run()
 
-def move_and_update():
+def move_and_update(**kwargs):
     """
     Moves files to their destinations
     Updates the clean dataset with the files moved
@@ -137,10 +137,12 @@ def move_and_update():
         'src_dst_func': get_src_dst,
         'move_back': False
         }
+    move_kwargs.update(kwargs.get('move_kwargs', {}))
 
     clean_kwargs = {
         'clean_dataset': gld.get_filepath('clean_dataset')
     }
+    clean_kwargs.update(kwargs.get('clean_kwargs', {}))
 
     (Pipeline('move_pipeline')
      .update_state('flag_pipeline_passed', gld.get_filepath('flag_pipeline_passed'))

@@ -166,20 +166,25 @@ See [templates](templates/) for the template files you should copy. Copy each on
 main_template.py
 Main is not version controlled, so copy over the contents of this file and comment/uncomment code as needed.
 """
-from qc_pipelines import pull_comparison_sources, walk, compare_sources_and_duplicates, move_and_update, csv_records
-    
+import qc_pipelines as qcp
+
 if __name__ == '__main__':
     CSV_RECORDS_KW = {'csv_kwargs': {'csv_filepath': 'sample_data/sample_csv_database.csv'}}
-    csv_records(**CSV_RECORDS_KW)
+    qcp.csv_records(**CSV_RECORDS_KW)
 
-    # pull_comparison_sources()
-    ## Run only csv_records() [option #1] OR pull_comparison_sources() [option #2]
+    # qcp.pull_comparison_sources()
+    # Run only csv_records() [option #1] OR pull_comparison_sources() [option #2]
 
-    walk()
+    WALK_KWARGS = {'walk_kwargs': {'roots': ["sample_data/"]}}
+    walk(**WALK_KWARGS)
 
-    compare_sources_and_duplicates()
+    CMP_KWARGS = {'flag_kwargs': {'record_end_date': qcp.date(2025, 4, 30)},
+        'duplicate_kwargs': {'duplicate_root': 'sample_data/duplicates'},
+        'move_kwargs': {'move_back': False}}
+    qcp.compare_sources_and_duplicates(**CMP_KWARGS)
 
-    move_and_update()
+    MOVE_KWARGS = {'move_kwargs': {'move_back': False}}
+    qcp.move_and_update(**MOVE_KWARGS)
 
 ```
 
@@ -302,7 +307,7 @@ If all of those checks pass, the we create a destination path for the file and a
         - 2025-04-30 was used for our sample output runs, the default is the current date.
         - Any filenames that match a record, but go beyond the record_end_date, will be filtered out.
     - *duplicate_root* should be updated with the desired root folder to move duplicate files to.
-    - *move_back* should be updated to False (move from their original location to the destination) or True (move from their destination back to their original location) based on the need.
+    - *move_back* affects the movement of the duplicate files. It should be updated to False (move from their original location to the destination) or True (move from their destination back to their original location) based on the need.
 3. This step accomplishes the following:
     - Compares id_dates in filenames to the records
         - If the file is within the date range but there is no match, the script creates an excel file for review.
