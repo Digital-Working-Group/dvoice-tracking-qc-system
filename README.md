@@ -15,7 +15,7 @@ This repository contains an outline to set up QC (quality control) pipelines and
 # Record Database Details
 The example QC scripts are designed to ingest a CSV or to pull from REDCap using an API token. To run the QC pipelines, you only need one database for comparison, but both options are outlined below.
 
-## CSV Structure
+## Input CSV Structure (Input Option #1)
 The CSV is structured to be similar to the export from a REDCap project with only one form ("Information Sheet"). The columns of the CSV are described below:
 | Fieldname | Description | Example |
 |---|---|---|
@@ -26,7 +26,7 @@ The CSV is structured to be similar to the export from a REDCap project with onl
 
 For an example, see [sample_csv_database.csv](sample_data/sample_csv_database.csv).
 
-## REDCap Project Structure
+## REDCap Project Structure (Input Option #2)
 To build out your own QC System, see [ProjectStructureExample.REDCap.xml](redcap_example/ProjectStructureExample.REDCap.xml) for a sample REDCap structure. To create a new REDCap project via importing a REDCap XML file, see the [REDCap Setup](#redcap-setup) section for more detailed information.
 
 This project structure has only one form ("Information Sheet") with fields described below:
@@ -120,7 +120,7 @@ Example provenance output:
 
 # Installation and Setup
 ## Script Setup
-These scripts were developed using Python 3.13.1, but have been tested with (CODY + JULIA ADD).
+These scripts were developed using Python 3.13.1.
 Install the requirements needed to run these scripts:
 ```sh
 pip install -r py3-13-1_requirements.txt
@@ -128,7 +128,7 @@ pip install -r py3-13-1_requirements.txt
 
 See [templates](templates/) for the template files you should copy. Copy each one into your root folder and rename by removing *_template* from the filename. Fill in any filepaths, tokens, or URLs needed.
 
-`config.json` should be edited to contain the path to the root folder for the provenance logs (`prov_root`), the API URL for your REDCap, and the path to the root folder for the clean dataset.
+`config.json` should be edited to contain the path to the root folder for the provenance logs (`prov_root`), the API URL for your REDCap (only if using Option #2 (REDCap API) as input, instead of an input CSV (Option #1)), and the path to the root folder for the clean dataset.
 
 ```json
 {
@@ -159,9 +159,24 @@ See [templates](templates/) for the template files you should copy. Copy each on
 }
 ```
 
-`main.py` will look identical to [main_template.py](templates/main_template.py).
+`main.py` will look identical to [main_template.py](templates/main_template.py) and is the main entrypoint for running the scripts.
 
-## REDCap Setup
+```py
+"""
+main_template.py
+Main is not version controlled, so copy over the contents of this file and comment/uncomment code as needed.
+"""
+from qc_pipelines import pull_comparison_sources, walk, compare_sources_and_duplicates, move_and_update, csv_records
+    
+if __name__ == '__main__':
+    csv_records()
+    pull_comparison_sources()
+    walk()
+    compare_sources_and_duplicates()
+    move_and_update()
+```
+
+## REDCap Setup (Input Option #2)
 If you are using a REDCap project as your database, you will also need to save your API token.
 `read_token.py` should have the `token_loc` variable edited to contain the filepath to a text file that has a single line containing your [REDCap API token](#redcap-api-access).
 
