@@ -18,20 +18,20 @@ from qc_scripts.utility.read import read_dictionary_file
 from qc_scripts.utility import get_latest_data as gld
 from qc_scripts.walk import match_filename_format
 
-def csv_records():
+def csv_records(**kwargs):
     """
     Reads in a CSV in that contains the same fields as the example REDCap
     Validates idtype and id and checks that required fields have been filled out.
     """
 
-    csv_kwargs = {
+    csv_kwargs = kwargs.get('csv_kwargs', {
         'csv_filepath': 'sample_data/sample_csv_database.csv'
-    }
+    })
 
-    validate_kwargs = {
+    validate_kwargs = kwargs.get('validate_kwargs', {
         'required_fieldnames': ['date_dc', 'data_loc'],
         'ext': 'csv_records'
-    }
+    })
 
     (Pipeline('csv_records_pipeline')
      .add_node(SourceNode(func=read_csv_records, **csv_kwargs))
@@ -134,7 +134,7 @@ def move_and_update():
         'src_dst_func': get_src_dst,
         'move_back': False
         }
-    
+
     clean_kwargs = {
         'clean_dataset': gld.get_filepath('clean_dataset')
     }
