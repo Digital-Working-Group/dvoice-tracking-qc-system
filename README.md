@@ -236,7 +236,7 @@ Our example compares to the [records database CSV](sample_data/sample_csv_databa
 1. See `main.csv_records()`.
     - This reads data from the CSV and reformats it to be keyed by id_date.
     - It then validates the data by checking that the required fields have data.
-    - Change the `csv_filepath` argument within CSV_RECORDS_KW in `main.py` to target the correct input CSV.
+    - Change the `csv_filepath` argument within CSV_RECORDS_KW in `main.py` to target the intended input CSV.
 
 #### Keyword Arguments for csv_records()
 | variable name | type(s) | description | default value | optional |
@@ -265,6 +265,7 @@ This step walks over a predefined folder and outputs JSONs to describe files fou
 
 1. See `main.walk()`.
     - See [Walk Sample Data](#walk-sample-data) for a usage example.
+    - Change roots in WALK_KWARGS in `main.py` to target the intended root folder(s) to walk over.
 2. The *walk_pipeline_walk* and *walk_pipeline_other_walk* JSON files (see the updated static.json for filepaths) will contain flagged issues. Issues and resolutions include:
     - Wrong extension type: This file extension wasn't expected, handle accordingly (e.g., Move the file out to a different folder.)
     - No match: Filename did not match the regex. Modify the filename to fit the expected pattern.
@@ -275,7 +276,7 @@ This step walks over a predefined folder and outputs JSONs to describe files fou
 #### Keyword Arguments for walk() 
 | variable name | type(s) | description | default value | optional |
 |---|---|---|---|---|
-| roots | list | Filepaths to crawl. | No default | No |
+| roots | list | Filepaths to crawl. | ["sample_data/"] | No |
 | ignore_list | list | Files or folders to ignore in walk. | [] | Yes |
 | keep_exts | tuple | File extensions to look for. | No default | No |
 | pattern_list | list | Tuples of regex pattern and indices. | None | Yes |
