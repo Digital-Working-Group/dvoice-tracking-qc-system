@@ -104,6 +104,10 @@ def compare_sources_and_duplicates():
         'duplicate_root': 'sample_data/duplicates/'
     }
 
+    move_kwargs = {
+        'move_back': False
+    }
+
     (Pipeline('flag_pipeline')
         .update_state('walk_passed', gld.get_filepath('walk_pipeline_walk'))
         .add_node(FilterNode(func=flag_id_date, input_key='walk_passed', **kwargs))
@@ -115,6 +119,7 @@ def compare_sources_and_duplicates():
         .add_node(ActionNode(func=write_flagged_excel, input_keys=['flagged_tester_id_no_redcap_example'],
                              **{'flag_type': 'tester_id_no_records', 'ext': 'example'}))
         .add_node(FilterNode(func=clean_duplicates, **duplicate_kwargs))
+        .add_node(ActionNode(func=move_files, input_keys=['duplicates'], **move_kwargs))
         .add_node(FilterNode(func=flag_file_count))
         .add_node(FilterNode(func=check_location, **{'records': records}))
         .add_node(FilterNode(func=get_dst))
@@ -125,14 +130,17 @@ def move_and_update():
     Moves files to their destinations
     Updates the clean dataset with the files moved
     """
-    kwargs = {
+    move_kwargs = {
         'src_dst_func': get_src_dst,
-        'move_back': False,
-        'clean_dataset': gld.get_filepath('clean_dataset')
+        'move_back': False
         }
+    
+    clean_kwargs = {
+        'clean_dataset': gld.get_filepath('clean_dataset')
+    }
 
     (Pipeline('move_pipeline')
      .update_state('flag_pipeline_passed', gld.get_filepath('flag_pipeline_passed'))
-     .add_node(ActionNode(func=move_files, input_keys=['flag_pipeline_passed'], **kwargs))
-     .add_node(ActionNode(func=update_clean_dataset, input_keys=['flag_pipeline_passed'], **kwargs))
+     .add_node(ActionNode(func=move_files, input_keys=['flag_pipeline_passed'], **move_kwargs))
+     .add_node(ActionNode(func=update_clean_dataset, input_keys=['flag_pipeline_passed'], **clean_kwargs))
     ).run()
