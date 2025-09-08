@@ -1,16 +1,1 @@
-{
-    "clean_dataset": "",
-    "walk_pipeline_walk": "",
-    "walk_pipeline_other_walk": "",
-    "pull_sources_pipeline_redcap_records": "",
-    "flag_pipeline_passed": "",
-    "flag_pipeline_flagged_no_redcap_entry_example": "",
-    "flag_pipeline_extra_files": "",
-    "flag_pipeline_duplicates": "",
-    "flag_pipeline_location_mismatch": "",
-    "flag_pipeline_flagged_tester_id_mismatch_example": "",
-    "flag_pipeline_flagged_tester_id_no_redcap_example": "",
-    "move_pipeline_move": "",
-    "move_pipeline_move_move_back": "",
-    "pull_sources_pipeline_fix_redcap": ""
-}
+{}
