@@ -120,11 +120,13 @@ Provenance output example:
 
 # Installation and Setup
 ## Python Requirements
-These scripts were developed using Python 3.13.1.
-Install the requirements needed to run these scripts:
+These scripts were developed using Python versions 3.9.6 and 3.13.1. 
+Requirements for either Python version can be found in the respective requirements subfolders:
 ```sh
-pip install -r py3-13-1_requirements.txt
+pip install -r requirements/python3-9-6/requirements.txt ## Python 3.9.6 requirements
+pip install -r requirements/python3-13-1/requirements.txt ## Python 3.13.1 requirements
 ```
+License information for each set of requirements.txt can be found in their respective pip-licenses.md in the same folder.
 ## Setup Template Files
 See [templates](templates/) for the template files you should copy. Copy each one into your root folder and rename by removing *_template* from the filename. Fill in any filepaths, tokens, or URLs needed.
 
