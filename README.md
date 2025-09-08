@@ -125,7 +125,7 @@ Install the requirements needed to run these scripts:
 ```sh
 pip install -r py3-13-1_requirements.txt
 ```
-## Template Script File Setup
+## Setup Template Files
 See [templates](templates/) for the template files you should copy. Copy each one into your root folder and rename by removing *_template* from the filename. Fill in any filepaths, tokens, or URLs needed.
 
 ### config.json
@@ -288,7 +288,7 @@ This step walks over a predefined folder and outputs JSONs to describe files fou
 | make_kv | func | Defines key-value pairs for walk data. | default_make_kv | Yes |
 | walk_kwargs | dict | Any additional walk kwargs. | {} | Yes |
 
-### Compare sources and duplicates
+### Compare Sources and Duplicates
 This step filters based on some example criteria to ensure that the filenames match the data recorded and that there are no extra or duplicate files.
 
 The specific steps used in this example include:
@@ -341,7 +341,7 @@ If all of those checks pass, the we create a destination path for the file and a
 | records | str | Path to CSV or REDCap records in JSON format. | Output JSON from csv_records() | No |
 | ext | str | Filename extension to the output flag excel files.| 'example' | Yes |
 
-### Move and update
+### Move and Update
 1. See `main.move_and_update()`.
     - See [Move and Update the Clean Dataset](#move-and-update-the-clean-dataset) for a usage example.
     - This step moves files to their final destinations and then updates the clean dataset with all of the files cleaned and moved. 
@@ -436,7 +436,7 @@ main.compare_sources_and_duplicates()
         - Our sample data will flag BL01-38126_20250108.
 
 ### Move and Update the Clean Dataset
-1. In [qc_pipelines.move_and_update](qc_pipelines.py), ensure that `move_back` in `kwargs` is set to be `False`.
+1. In [qc_pipelines.move_and_update](qc_pipelines.py), if `move_back` is False, it will move the source files to their destinations. If set to True, it will move them back from their intended destinations back to their original source location.
 2. Run the following commands:
 ```python
 import main

@@ -14,7 +14,7 @@ def flag_id_date(input_data, **kwargs):
     """
     ## Get kwargs
     records = kwargs.get('records')
-    record_end_date = kwargs.get('record_end_date', datetime.now())
+    record_end_date = kwargs.get('record_end_date', datetime.now().date())
     ext = kwargs.get('ext', '')
     rc_tester_id_fieldname = kwargs.get('rc_tester_id_fieldname')
     rc_date_fieldname = kwargs.get('rc_date_fieldname')

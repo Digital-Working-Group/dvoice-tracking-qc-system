@@ -12,7 +12,7 @@ if __name__ == '__main__':
     # Run only csv_records() [option #1] OR pull_comparison_sources() [option #2]
 
     WALK_KWARGS = {'walk_kwargs': {'roots': ["sample_data/"]}}
-    walk(**WALK_KWARGS)
+    qcp.walk(**WALK_KWARGS)
 
     CMP_KWARGS = {'flag_kwargs': {'record_end_date': qcp.date(2025, 4, 30)},
         'duplicate_kwargs': {'duplicate_root': 'sample_data/duplicates'},
