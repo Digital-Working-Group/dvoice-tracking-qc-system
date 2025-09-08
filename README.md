@@ -24,7 +24,7 @@ The CSV is structured to be similar to the export from a REDCap project with onl
 | tester_id | ID of the tester. | 123 |
 | data_loc | The location where the data was collected. | remote |
 
-For an example, see [sample_csv_database.csv](sample_data/sample_csv_database.csv).
+For an example, see [sample_csv_database.csv](sample_csv_database.csv).
 
 ## REDCap Project Structure (Input Option #2)
 To build out your own QC System, see [ProjectStructureExample.REDCap.xml](redcap_example/ProjectStructureExample.REDCap.xml) for a sample REDCap structure. To create a new REDCap project via importing a REDCap XML file, see the [REDCap Setup](#redcap-setup) section for more detailed information.
@@ -86,7 +86,7 @@ Provenance output example:
             "duration": "0:00:00.061971",
             "node_func": "<function read_csv_records at 0x000001FB70AD71A0>",
             "node_inputs": {
-                "csv_filepath": "sample_data/sample_csv_database.csv"
+                "csv_filepath": "sample_csv_database.csv"
             },
             "node_name": "read_csv_records",
             "remote_url": "https://github.com/Digital-Working-Group/qc_system.git",
@@ -154,7 +154,7 @@ Main is not version controlled, so copy over the contents of this file and comme
 import qc_pipelines as qcp
 
 if __name__ == '__main__':
-    CSV_RECORDS_KW = {'csv_kwargs': {'csv_filepath': 'sample_data/sample_csv_database.csv'}}
+    CSV_RECORDS_KW = {'csv_kwargs': {'csv_filepath': 'sample_csv_database.csv'}}
     qcp.csv_records(**CSV_RECORDS_KW)
 
     # qcp.pull_comparison_sources()

@@ -5,7 +5,7 @@ Main is not version controlled, so copy over the contents of this file and comme
 import qc_pipelines as qcp
 
 if __name__ == '__main__':
-    CSV_RECORDS_KW = {'csv_kwargs': {'csv_filepath': 'sample_data/sample_csv_database.csv'}}
+    CSV_RECORDS_KW = {'csv_kwargs': {'csv_filepath': 'sample_csv_database.csv'}}
     qcp.csv_records(**CSV_RECORDS_KW)
 
     # qcp.pull_comparison_sources()
