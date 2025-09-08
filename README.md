@@ -381,7 +381,10 @@ main.csv_records()
 ```
 - This will result in two files:
     - `csv_records_pipeline_csv_records`: All records read from the CSV.
-    - `csv_records_pipeline_fix_record`: Records that need to be reviewed and corrected. Our sample data should flag the record_id DC265 and DC0212432.
+    - `csv_records_pipeline_fix_record`: Records that need to be reviewed and corrected.
+    - Our sample data result in the flagging of:
+        - missing_fields: BL00-13234_20241217, DC02-12432_20241123
+        - invalid_id: DC265
 
 ### Walk Sample Data
 1. Run the following commands:
