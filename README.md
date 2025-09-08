@@ -141,9 +141,11 @@ See [templates](templates/) for the template files you should copy. Copy each on
 ```
 
 ### static.json
-`static.json` will initially be empty and will be populated with the relevant filepaths as the pipeline generate files:
+`static.json` will initially have only the "clean_dataset" key and will be populated with the relevant filepaths as the pipeline generate files:
 ```json
-{}
+{
+    "clean_dataset": ""
+}
 ```
 
 ### main.py
