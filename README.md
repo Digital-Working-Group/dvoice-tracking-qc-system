@@ -74,7 +74,7 @@ Our current implementation captures the following:
     - Node function name
     - Node inputs (kwargs)
 
-Example provenance output:
+Provenance output example:
 ```json
 {
     "commit_hash": "c6f678cae97c63175b4dc7f537548dcd5f88b758",
@@ -119,17 +119,17 @@ Example provenance output:
 ```
 
 # Installation and Setup
-## Script Setup
+## Python Requirements
 These scripts were developed using Python 3.13.1.
 Install the requirements needed to run these scripts:
 ```sh
 pip install -r py3-13-1_requirements.txt
 ```
-
+## Template Script File Setup
 See [templates](templates/) for the template files you should copy. Copy each one into your root folder and rename by removing *_template* from the filename. Fill in any filepaths, tokens, or URLs needed.
 
+### config.json
 `config.json` should be edited to contain the path to the root folder for the provenance logs (`prov_root`), the API URL for your REDCap (only if using Option #2 (REDCap API) as input, instead of an input CSV (Option #1)), and the path to the root folder for the clean dataset.
-
 ```json
 {
     "prov_root": "provenance/",
@@ -138,8 +138,8 @@ See [templates](templates/) for the template files you should copy. Copy each on
 }
 ```
 
+### static.json
 `static.json` will initially look like the below and each value will be populated with the relevant filepaths as the various parts of the pipeline generate files:
-
 ```json
 {
     "clean_dataset": "",
@@ -159,8 +159,8 @@ See [templates](templates/) for the template files you should copy. Copy each on
 }
 ```
 
+### main.py
 `main.py` will look identical to [main_template.py](templates/main_template.py) and is the main entrypoint for running the scripts.
-
 ```py
 """
 main_template.py
