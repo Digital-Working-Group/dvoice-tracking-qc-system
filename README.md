@@ -139,24 +139,9 @@ See [templates](templates/) for the template files you should copy. Copy each on
 ```
 
 ### static.json
-`static.json` will initially look like the below and each value will be populated with the relevant filepaths as the various parts of the pipeline generate files:
+`static.json` will initially be empty and will be populated with the relevant filepaths as the pipeline generate files:
 ```json
-{
-    "clean_dataset": "",
-    "walk_pipeline_walk": "",
-    "walk_pipeline_other_walk": "",
-    "csv_records_pipeline_csv_records": "",
-    "flag_pipeline_passed": "",
-    "flag_pipeline_flagged_no_records_example": "",
-    "flag_pipeline_extra_files": "",
-    "flag_pipeline_duplicates": "",
-    "flag_pipeline_location_mismatch": "",
-    "flag_pipeline_flagged_tester_id_mismatch_example": "",
-    "flag_pipeline_flagged_tester_id_no_records_example": "",
-    "move_pipeline_move": "",
-    "move_pipeline_move_move_back": "",
-    "csv_records_pipeline_fix_records": ""
-}
+{}
 ```
 
 ### main.py
