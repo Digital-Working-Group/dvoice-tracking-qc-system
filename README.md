@@ -150,7 +150,6 @@ Note that all resulting JSONs are referenced by their key in `static.json` as in
 This example contains commands to run each step in an interactive python shell, but you may also run each step by running main.py and commenting/uncommenting each function call. 
 
 ### Read CSV Records
-1. See the following sample:
 ```python
 import qc_pipelines as qcp
 
@@ -174,7 +173,6 @@ if __name__ == '__main__':
 | required_fieldnames | list | Fields that require a value. | ['date_dc', 'data_loc'] | Yes |
 
 ### Walk Sample Data
-1. Run the following commands:
 ```python
 import qc_pipelines as qcp
 
@@ -203,8 +201,6 @@ if __name__ == '__main__':
 | walk_kwargs | dict | Any additional walk kwargs. | {'multiple_values': True, 'ext': 'walk'} | Yes |
 
 ### Compare Sources and Duplicates
-1. In [qc_pipelines.compare_sources_and_duplicates](qc_pipelines.py), update the `record_end_date` in `kwargs` to be your desired end date. For our tests, we used (2025, 4, 30).
-2. Run the following commands:
 ```python
 import qc_pipelines as qcp
 
