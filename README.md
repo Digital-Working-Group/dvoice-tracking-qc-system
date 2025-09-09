@@ -4,40 +4,11 @@ This repository contains an outline to set up QC (quality control) pipelines and
 
 | Table of Contents |
 |---|
-| [Record Database Details](#record-database-details) |
-| [Repository Contents](#repository-contents) |
-| [Provenance and Logging](#provenance-and-logging) |
 | [Installation and Setup](#installation-and-setup) |
-| [QC Steps](#qc-steps) |
 | [Usage Example](#usage-example) |
+| [Repository Scripts](#repository-scripts) |
+| [Provenance and Logging](#provenance-and-logging) |
 | [Citations](#citations) |
-
-## Input CSV Structure
-The CSV is structured to be similar to the export from a REDCap project with only one form ("Information Sheet"). The columns of the CSV are described below:
-| Fieldname | Description | Example |
-|---|---|---|
-| record_id | Record ID for that data. For our testing, we chose a format consisting of a Cohort Code (two letters and two numbers) and a Participant ID (five numbers). All record ids are samples only. | AB0012345 |
-| date_dc | The date the data was captured (YYYY-MM-DD) | 2025-05-29 |
-| tester_id | ID of the tester. | 123 |
-| data_loc | The location where the data was collected. | remote |
-
-For an example, see [sample_csv_database.csv](sample_csv_database.csv).
-
-# Repository Contents
-This repository contains scripts to build and customize pipelines as well as sample data to follow along with the example presented below. 
-To familiarize yourself with this repository, consider exploring:
-
-- [qc_pipelines.py](qc_scripts/qc_pipelines.py): combines scripts by inputting them as nodes to pipelines to build out the structure of the QC
-- [stream.py](qc_scripts/stream.py): holds the Pipeline and Node class structures
-- [logger.py](qc_scripts/logger.py): handles the saving and logging of pipeline results
-- [records.py](qc_scripts/records.py): handles ingesting and formatting records from a database
-- [walk.py](qc_scripts/walk.py): walk functions to collect files
-- [compare_records.py](qc_scripts/compare_records.py): functions to compare filename information to record field data
-- [write_flagged_excel.py](qc_scripts/write_flagged_excel.py): writes excel files for manual review
-- [duplicates.py](qc_scripts/duplicates.py): functions to check for duplicates or too many file occurrences
-- [destination.py](qc_scripts/destination.py): functions to define destination of files that passed all checks
-- [move.py](qc_scripts/move.py): functions to move files
-- [clean_dataset.py](qc_scripts/clean_dataset.py): functions to compare to and update the clean dataset of all files that have passed the QC
 
 # Installation and Setup
 ## Python Requirements
@@ -99,7 +70,7 @@ if __name__ == '__main__':
 ```
 # Usage Example
 ## Sample Data
-The sample data provided to run the QC can be found in [sample_data](sample_data/). The recordings themselves are unrelated to the QC process.
+The sample data provided to run the QC can be found in the [sample_data/](sample_data/) folder.
 ```
 ├── flac
 │   ├── BL01_06800_20250508_115_remote_bad_extension.flac
@@ -123,6 +94,18 @@ The sample data provided to run the QC can be found in [sample_data](sample_data
 │   ├── DC02_61041_20250407_123_in-person.wav
 ```
 ## Sample QC Walkthrough
+
+### Input CSV Structure
+The CSV is structured to be similar to the export from a REDCap project with only one form ("Information Sheet"). The columns of the CSV are described below:
+| Fieldname | Description | Example |
+|---|---|---|
+| record_id | Record ID for that data. For our testing, we chose a format consisting of a Cohort Code (two letters and two numbers) and a Participant ID (five numbers). All record ids are samples only. | AB0012345 |
+| date_dc | The date the data was captured (YYYY-MM-DD) | 2025-05-29 |
+| tester_id | ID of the tester. | 123 |
+| data_loc | The location where the data was collected. | remote |
+
+For an example, see [sample_csv_database.csv](sample_csv_database.csv).
+
 ### Read CSV Records
 ```python
 import qc_pipelines as qcp
@@ -138,7 +121,7 @@ if __name__ == '__main__':
         - missing_fields: BL00-13234_20241217, DC02-12432_20241123
         - invalid_id: DC265
 - Change `csv_filepath` to the proper filepath to your records CSV.
-    - This example compares to the [records database CSV](sample_data/sample_csv_database.csv).
+    - This example compares to the [records database CSV](sample_csv_database.csv).
 
 #### Keyword Arguments for csv_records()
 | variable name | type(s) | description | default value | optional |
@@ -232,6 +215,22 @@ if __name__ == '__main__':
 | src_dst_func | func | Get src and dst for move. | [get_src_dst()](qc_scripts/destination.py) | Yes |
 | move_back | bool | Move from src to dst. It should be True to move back to the original location (dst to src). | False | Yes |
 | clean_dataset | str | Filepath to the current clean dataset | 'clean_dataset' key in the static.json | No |
+
+# Repository Scripts
+This repository contains scripts to build and customize pipelines as well as sample data to follow along with the example presented below. 
+To familiarize yourself with this repository, consider exploring:
+
+- [qc_pipelines.py](qc_scripts/qc_pipelines.py): combines scripts by inputting them as nodes to pipelines to build out the structure of the QC
+- [stream.py](qc_scripts/stream.py): holds the Pipeline and Node class structures
+- [logger.py](qc_scripts/logger.py): handles the saving and logging of pipeline results
+- [records.py](qc_scripts/records.py): handles ingesting and formatting records from a database
+- [walk.py](qc_scripts/walk.py): walk functions to collect files
+- [compare_records.py](qc_scripts/compare_records.py): functions to compare filename information to record field data
+- [write_flagged_excel.py](qc_scripts/write_flagged_excel.py): writes excel files for manual review
+- [duplicates.py](qc_scripts/duplicates.py): functions to check for duplicates or too many file occurrences
+- [destination.py](qc_scripts/destination.py): functions to define destination of files that passed all checks
+- [move.py](qc_scripts/move.py): functions to move files
+- [clean_dataset.py](qc_scripts/clean_dataset.py): functions to compare to and update the clean dataset of all files that have passed the QC
 
 # Provenance and Logging
 This repository handles logging using a provenance schema, based loosely off of [RADIFOX](https://github.com/jh-mipc/radifox), which provides an example of provenance applied to imaging. You may edit the log contents by modifying the provenance dictionaries created in [logger.log_pipeline()](qc_scripts/logger.py) and [logger.log_node()](qc_scripts/logger.py).
