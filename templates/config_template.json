@@ -1,5 +1,4 @@
 {
     "prov_root": "YOUR PROVENANCE FOLDER FILEPATH",
-    "redcap_url": "YOUR REDCAP URL",
     "clean_root": "YOUR CLEAN DATASET FOLDER FILEPATH"
 }

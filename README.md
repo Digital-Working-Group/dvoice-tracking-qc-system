@@ -1,6 +1,6 @@
 # Digital Voice Tracking and QC System
 
-This repository contains an outline to set up QC (quality control) pipelines and walks through an example QC run on a sample REDCap with fictitious participant data.
+This repository contains an outline to set up QC (quality control) pipelines and walks through an example QC run, where a schedule record of participant visits are compared against filenames of audio recordings of the participant visits.
 
 | Table of Contents |
 |---|
@@ -12,10 +12,7 @@ This repository contains an outline to set up QC (quality control) pipelines and
 | [Usage Example](#usage-example) |
 | [Citations](#citations) |
 
-# Record Database Details
-The example QC scripts are designed to ingest a CSV or to pull from REDCap using an API token. To run the QC pipelines, you only need one database for comparison, but both options are outlined below.
-
-## Input CSV Structure (Input Option #1)
+## Input CSV Structure
 The CSV is structured to be similar to the export from a REDCap project with only one form ("Information Sheet"). The columns of the CSV are described below:
 | Fieldname | Description | Example |
 |---|---|---|
@@ -25,19 +22,6 @@ The CSV is structured to be similar to the export from a REDCap project with onl
 | data_loc | The location where the data was collected. | remote |
 
 For an example, see [sample_csv_database.csv](sample_csv_database.csv).
-
-## REDCap Project Structure (Input Option #2)
-To build out your own QC System, see [ProjectStructureExample.REDCap.xml](redcap_example/ProjectStructureExample.REDCap.xml) for a sample REDCap structure. To create a new REDCap project via importing a REDCap XML file, see the [REDCap Setup](#redcap-setup) section for more detailed information.
-
-This project structure has only one form ("Information Sheet") with fields described below:
-| Fieldname | Description | Example |
-|---|---|---|
-| record_id | Record ID for that data. For our testing, we chose a format consisting of a Cohort Code (two letters and two numbers) and a Participant ID (five numbers). All record ids are samples only. | AB0012345 |
-| date_dc | The date the data was captured (YYYY-MM-DD) | 2025-05-29 |
-| tester_id | ID of the tester. | 123 |
-| data_loc | The location where the data was collected. | remote |
-
-REDCap Software Version 15.2.5 - © 2025 Vanderbilt University was utilized for this repository.
 
 # Repository Contents
 This repository contains scripts to build and customize pipelines as well as sample data to follow along with the example presented below. 
@@ -55,69 +39,6 @@ To familiarize yourself with this repository, consider exploring:
 - [move.py](qc_scripts/move.py): functions to move files
 - [clean_dataset.py](qc_scripts/clean_dataset.py): functions to compare to and update the clean dataset of all files that have passed the QC
 
-# Provenance and Logging
-
-This repository handles logging using a provenance schema, based loosely off of [RADIFOX](https://github.com/jh-mipc/radifox), which provides an example of provenance applied to imaging. You may edit the log contents by modifying the provenance dictionaries created in [logger.log_pipeline()](qc_scripts/logger.py) and [logger.log_node()](qc_scripts/logger.py).
-
-Our current implementation captures the following:
-- Pipeline Data:
-    - Pipeline name
-    - Start time
-    - Duration
-    - Pipeline function name
-    - Pipeline input
-    - Nodes
-- Node Data:
-    - Node name
-    - Start time
-    - Duration
-    - Node function name
-    - Node inputs (kwargs)
-
-Provenance output example:
-```json
-{
-    "commit_hash": "c6f678cae97c63175b4dc7f537548dcd5f88b758",
-    "duration": "0:00:00.062552",
-    "func_name": "csv_records",
-    "nodes": [
-        {
-            "commit_hash": "c6f678cae97c63175b4dc7f537548dcd5f88b758",
-            "duration": "0:00:00.061971",
-            "node_func": "<function read_csv_records at 0x000001FB70AD71A0>",
-            "node_inputs": {
-                "csv_filepath": "sample_csv_database.csv"
-            },
-            "node_name": "read_csv_records",
-            "remote_url": "https://github.com/Digital-Working-Group/qc_system.git",
-            "script_path_in_repo": "qc_scripts\\records.py",
-            "start_time": "2025-08-27 14:47:40.838339"
-        },
-        {
-            "commit_hash": "c6f678cae97c63175b4dc7f537548dcd5f88b758",
-            "duration": "0:00:00.000556",
-            "node_func": "<function validate_records at 0x000001FB72BA7920>",
-            "node_inputs": {
-                "ext": "csv_records",
-                "required_fieldnames": [
-                    "date_dc",
-                    "data_loc"
-                ]
-            },
-            "node_name": "validate_records",
-            "remote_url": "https://github.com/Digital-Working-Group/qc_system.git",
-            "script_path_in_repo": "qc_scripts\\records.py",
-            "start_time": "2025-08-27 14:47:40.900322"
-        }
-    ],
-    "pipeline_input": {},
-    "pipeline_name": "csv_records_pipeline",
-    "remote_url": "https://github.com/Digital-Working-Group/qc_system.git",
-    "script_path_in_repo": "qc_pipelines.py",
-    "start_time": "2025-08-27 14:47:40.838331"
-}
-```
-
 # Installation and Setup
 ## Python Requirements
 These scripts were developed using Python versions 3.9.6 and 3.13.1. 
@@ -131,14 +52,13 @@ License information for each set of requirements.txt can be found in their respe
 Docker support can be found via the `Dockerfile` and `build_docker.sh` and `run_docker.sh` files.
 
 ## Setup Template Files
-See [templates](templates/) for the template files you should copy. Copy each one into your root folder and rename by removing *_template* from the filename. Fill in any filepaths, tokens, or URLs needed.
+See [templates](templates/) for the template files you should copy. Copy each one into your root folder and rename by removing *_template* from the filename.
 
 ### config.json
-`config.json` should be edited to contain the path to the root folder for the provenance logs (`prov_root`), the API URL for your REDCap (only if using Option #2 (REDCap API) as input, instead of an input CSV (Option #1)), and the path to the root folder for the clean dataset.
+`config.json` should be edited to contain the path to the root folder for the [provenance](Provenance-and-Logging) logs (`prov_root`) and the path to the root folder for the clean dataset (`clean_root`).
 ```json
 {
     "prov_root": "provenance/",
-    "redcap_url": "https://redcap.bumc.bu.edu/api/",
     "clean_root": "passed_data/clean_dataset"
 }
 ```
@@ -179,49 +99,6 @@ if __name__ == '__main__':
     qcp.move_and_update(**MOVE_KWARGS)
 
 ```
-
-## REDCap Setup (Input Option #2)
-If you are using a REDCap project as your database, you will also need to save your API token.
-`read_token.py` should have the `token_loc` variable edited to contain the filepath to a text file that has a single line containing your [REDCap API token](#redcap-api-access).
-
-```py
-"""
-read_token_template.py
-read_token.py is not version controlled because it contains the path to your REDCap token.
-"""
-
-def read_token():
-    """
-    get token
-    """
-    token_loc = "some_folder/token/token.txt"
-    with open(token_loc, 'r') as infile:
-        for line in infile:
-            return line.strip()
-    print("Key not found")
-    return None
-```
-
-The token text file should look like the below, where TOKEN_VALUE is replaced by the REDCap API token:
-```txt
-TOKEN_VALUE
-```
-### REDCap Project Setup
-1. Select **New Project**.
-2. For the **Project creation option** select *Upload a REDCap project XML file (CDISC ODM format)*. If you would like to use our structure but create your own sample data, use [ProjectStructureExample.REDCAP.xml](redcap_example/ProjectStructureExample.REDCap.xml) or upload with our sample data using [ProjectStructure_with_data.xml](redcap_example/ProjectStructure_with_data.xml).
-3. Click **Create Project**.
-
-### REDCap API Access
-To gain API access, you'll need to request a token. To do so:
-1. Open your REDCap project.
-2. Select **User Rights** from the side menu.
-3. Select your usr and click **Edit user privileges**.
-4. Check the boxes **API Export** and **API Import/Update** and save changes.
-5. Click **API** from the side menu.
-6. Click **Request API token**. You will recieve an email when your REDCap administrator has approved your request.
-7. Once approved, return to **API** from the side menu and you will now see your token. Copy that token and put it in a text file.
-8. In `read_token.py`, assign `token_loc` to be the path to the text file holding your REDCap token.
-9. In your `config.json`, update your `redcap_url` key to hold your REDCap API URL.
 
 # QC Steps
 
@@ -351,9 +228,6 @@ This example contains commands to run each step in an interactive python shell, 
 ### Read CSV Records
 1. See the following sample:
 ```python
-"""
-main_template.py
-"""
 import qc_pipelines as qcp
 
 if __name__ == '__main__':
@@ -378,8 +252,11 @@ if __name__ == '__main__':
 ### Walk Sample Data
 1. Run the following commands:
 ```python
-import main
-main.walk()
+import qc_pipelines as qcp
+
+if __name__ == '__main__':
+    WALK_KWARGS = {'walk_kwargs': {'roots': ["sample_data/"]}}
+    qcp.walk(**WALK_KWARGS)
 ```
 - This will result in two files:
     - `walk_pipeline_walk`: Files that were found and passed checks.
@@ -422,6 +299,68 @@ main.move_and_update()
  - This should move all passed files from the previous step into organized folders within `passed_data/`.
  - You may check and see that the clean dataset found in `passed_data/clean_dataset/` has also been updated with the moved data.
 
+# Provenance and Logging
+
+This repository handles logging using a provenance schema, based loosely off of [RADIFOX](https://github.com/jh-mipc/radifox), which provides an example of provenance applied to imaging. You may edit the log contents by modifying the provenance dictionaries created in [logger.log_pipeline()](qc_scripts/logger.py) and [logger.log_node()](qc_scripts/logger.py).
+
+Our current implementation captures the following:
+- Pipeline Data:
+    - Pipeline name
+    - Start time
+    - Duration
+    - Pipeline function name
+    - Pipeline input
+    - Nodes
+- Node Data:
+    - Node name
+    - Start time
+    - Duration
+    - Node function name
+    - Node inputs (kwargs)
+
+Provenance output example:
+```json
+{
+    "commit_hash": "c6f678cae97c63175b4dc7f537548dcd5f88b758",
+    "duration": "0:00:00.062552",
+    "func_name": "csv_records",
+    "nodes": [
+        {
+            "commit_hash": "c6f678cae97c63175b4dc7f537548dcd5f88b758",
+            "duration": "0:00:00.061971",
+            "node_func": "<function read_csv_records at 0x000001FB70AD71A0>",
+            "node_inputs": {
+                "csv_filepath": "sample_csv_database.csv"
+            },
+            "node_name": "read_csv_records",
+            "remote_url": "https://github.com/Digital-Working-Group/qc_system.git",
+            "script_path_in_repo": "qc_scripts\\records.py",
+            "start_time": "2025-08-27 14:47:40.838339"
+        },
+        {
+            "commit_hash": "c6f678cae97c63175b4dc7f537548dcd5f88b758",
+            "duration": "0:00:00.000556",
+            "node_func": "<function validate_records at 0x000001FB72BA7920>",
+            "node_inputs": {
+                "ext": "csv_records",
+                "required_fieldnames": [
+                    "date_dc",
+                    "data_loc"
+                ]
+            },
+            "node_name": "validate_records",
+            "remote_url": "https://github.com/Digital-Working-Group/qc_system.git",
+            "script_path_in_repo": "qc_scripts\\records.py",
+            "start_time": "2025-08-27 14:47:40.900322"
+        }
+    ],
+    "pipeline_input": {},
+    "pipeline_name": "csv_records_pipeline",
+    "remote_url": "https://github.com/Digital-Working-Group/qc_system.git",
+    "script_path_in_repo": "qc_pipelines.py",
+    "start_time": "2025-08-27 14:47:40.838331"
+}
+```
 # Citations
 ```bibtex
 @electronic{FHS-BAP-Data-Core:2025,
