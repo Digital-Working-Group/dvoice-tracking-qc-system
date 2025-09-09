@@ -7,9 +7,6 @@ if __name__ == '__main__':
     CSV_RECORDS_KW = {'csv_kwargs': {'csv_filepath': 'sample_csv_database.csv'}}
     qcp.csv_records(**CSV_RECORDS_KW)
 
-    # # qcp.pull_comparison_sources()
-    # # Run only csv_records() [option #1] OR pull_comparison_sources() [option #2]
-
     WALK_KWARGS = {'walk_kwargs': {'roots': ["sample_data/"]}}
     qcp.walk(**WALK_KWARGS)
 

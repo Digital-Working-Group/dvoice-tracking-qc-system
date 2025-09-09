@@ -225,37 +225,6 @@ To gain API access, you'll need to request a token. To do so:
 
 # QC Steps
 
-## Prepare Comparison Sources
-Please use Option #1 (main.csv_records()) OR Option #2 (main.pull_comparison_sources()) to use an Input CSV or a REDCap project respectively as the comparison source.
-
-### Input CSV (Comparison Source: Option #1)
-Our example compares to the [records database CSV](sample_data/sample_csv_database.csv) described above, but you may optionally use REDCap instead.
-1. See `main.csv_records()`.
-    - This reads data from the CSV and reformats it to be keyed by id_date.
-    - It then validates the data by checking that the required fields have data.
-    - Change the `csv_filepath` argument within CSV_RECORDS_KW in `main.py` to target the intended input CSV.
-
-#### Keyword Arguments for csv_records()
-| variable name | type(s) | description | default value | optional |
-|---|---|---|---|---|
-| csv_filepath | str| Filepath to your records CSV. | sample_data/sample_csv_database.csv | No |
-| required_fieldnames | list | Fields that require a value. | ['date_dc', 'data_loc'] | Yes |
-
-### REDCap Project and API (Comparison Source: Option #2)
-To compare to REDCap instead, you will need to one slight changes to the predefined KWARGS:
-    - In `qc_pipelines.compare_sources_and_duplicates()`, change records to grab the filepath associated with the key `pull_sources_pipeline_redcap_records`.
-1. See `main.pull_comparison_sources()`.
-    - This pulls data from REDCap and reformats it to be keyed by id_date.
-
-#### Keyword Arguments for pull_comparison_sources()
-| variable name | type(s) | description | default value | optional |
-|---|---|---|---|---|
-| fields_list | list | Fields to pull from REDCap. | [] | No |
-| token | func | Method that gets token. | No default | No |
-| redcap_url | str| REDCap API URL for your project. | No | No |
-| required_fieldnames | list | Fields that require a value. | [] | Yes |
-| ext | str | filename extension. | "validated_records" | Yes |
-
 ## Walk
 This step walks over a predefined folder and outputs JSONs to describe files found that matched the walk parameters and all other files found in the given directory (excluding anything from the ignore_list).
 
@@ -377,13 +346,19 @@ The sample data provided to run the QC can be found in [sample_data](sample_data
 ## Sample QC Walkthrough
 Note that all resulting JSONs are referenced by their key in `static.json` as individual filenames will change.
 
-This example contains commands to run each step in an interactive python shell, but you may also run each step my running main.py and commenting/uncommenting each method call. 
+This example contains commands to run each step in an interactive python shell, but you may also run each step by running main.py and commenting/uncommenting each function call. 
 
 ### Read CSV Records
-1. Run the following commands:
+1. See the following sample:
 ```python
-import main
-main.csv_records()
+"""
+main_template.py
+"""
+import qc_pipelines as qcp
+
+if __name__ == '__main__':
+    CSV_RECORDS_KW = {'csv_kwargs': {'csv_filepath': 'sample_csv_database.csv'}}
+    qcp.csv_records(**CSV_RECORDS_KW)
 ```
 - This will result in two files:
     - `csv_records_pipeline_csv_records`: All records read from the CSV.
@@ -391,6 +366,14 @@ main.csv_records()
     - Our sample data result in the flagging of:
         - missing_fields: BL00-13234_20241217, DC02-12432_20241123
         - invalid_id: DC265
+- Change `csv_filepath` to the proper filepath to your records CSV.
+    - This example compares to the [records database CSV](sample_data/sample_csv_database.csv).
+
+#### Keyword Arguments for csv_records()
+| variable name | type(s) | description | default value | optional |
+|---|---|---|---|---|
+| csv_filepath | str| Filepath to your records CSV. | sample_data/sample_csv_database.csv | No |
+| required_fieldnames | list | Fields that require a value. | ['date_dc', 'data_loc'] | Yes |
 
 ### Walk Sample Data
 1. Run the following commands:
