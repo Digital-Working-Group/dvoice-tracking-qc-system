@@ -102,29 +102,6 @@ if __name__ == '__main__':
 
 # QC Steps
 
-## Walk
-This step walks over a predefined folder and outputs JSONs to describe files found that matched the walk parameters and all other files found in the given directory (excluding anything from the ignore_list).
-
-1. See `main.walk()`.
-    - See [Walk Sample Data](#walk-sample-data) for a usage example.
-    - Change roots in WALK_KWARGS in `main.py` to target the intended root folder(s) to walk over.
-2. The *walk_pipeline_walk* and *walk_pipeline_other_walk* JSON files (see the updated static.json for filepaths) will contain flagged issues. Issues and resolutions include:
-    - Wrong extension type: This file extension wasn't expected, handle accordingly (e.g., Move the file out to a different folder.)
-    - No match: Filename did not match the regex. Modify the filename to fit the expected pattern.
-    - Invalid date: Verify the date with your team.
-3. The script can be rerun until the failures have been resolved. 
-    - You may want to move on to the next step before fixing all of these errors if you are waiting on input from team members.
-
-#### Keyword Arguments for walk() 
-| variable name | type(s) | description | default value | optional |
-|---|---|---|---|---|
-| roots | list | Filepaths to crawl. | ["sample_data/"] | No |
-| ignore_list | list | Folders to ignore in walk. | [] | Yes |
-| keep_exts | tuple | File extensions to look for. | ('wav', 'm4a', 'mp3') | No |
-| pattern_list | list | Tuples of regex pattern and indices. | [example_pattern_data()](qc_scripts/utility/pattern.py) | Yes |
-| make_kv | func | Defines key-value pairs for walk data. | [match_filename_format()](qc_scripts/walk.py) | Yes |
-| walk_kwargs | dict | Any additional walk kwargs. | {'multiple_values': True, 'ext': 'walk'} | Yes |
-
 ### Compare Sources and Duplicates
 This step filters based on some example criteria to ensure that the filenames match the data recorded and that there are no extra or duplicate files.
 
@@ -266,6 +243,17 @@ if __name__ == '__main__':
         - "sample_data/mp3/DC0312566.mp3"
         - "sample_data/wav/BL01-06800_20250509_112_in-person.wav",
         - "sample_data/wav/BL01_38126_20250108_in-person.wav"
+- Change `roots` to a list of root folders to search for files.
+
+#### Keyword Arguments for walk() 
+| variable name | type(s) | description | default value | optional |
+|---|---|---|---|---|
+| roots | list | Filepaths to crawl. | ["sample_data/"] | No |
+| ignore_list | list | Folders to ignore in walk. | [] | Yes |
+| keep_exts | tuple | File extensions to look for. | ('wav', 'm4a', 'mp3') | No |
+| pattern_list | list | Tuples of regex pattern and indices. | [example_pattern_data()](qc_scripts/utility/pattern.py) | Yes |
+| make_kv | func | Defines key-value pairs for walk data. | [match_filename_format()](qc_scripts/walk.py) | Yes |
+| walk_kwargs | dict | Any additional walk kwargs. | {'multiple_values': True, 'ext': 'walk'} | Yes |
 
 ### Compare Sources and Duplicates
 1. In [qc_pipelines.compare_sources_and_duplicates](qc_pipelines.py), update the `record_end_date` in `kwargs` to be your desired end date. For our tests, we used (2025, 4, 30).
