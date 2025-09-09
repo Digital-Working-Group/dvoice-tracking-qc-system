@@ -102,59 +102,6 @@ if __name__ == '__main__':
 
 # QC Steps
 
-### Compare Sources and Duplicates
-This step filters based on some example criteria to ensure that the filenames match the data recorded and that there are no extra or duplicate files.
-
-The specific steps used in this example include:
-- Checking that the id_date exists in the record.
-- Checking that the tester_id matches the one recorded in the record.
-- Checking that no duplicate files exist.
-- Checking that no extra files exist.
-- Checking that the location in the filename matches the location recorded in the record.
-
-If all of those checks pass, the we create a destination path for the file and add it to the dictionary. JSONs are written for the passed files as well as failures at each node in the pipeline.
-
-1. See `main.compare_sources_and_duplicates()`
-    - See [Compare Sources and Duplicates](#compare-sources-and-duplicates) for a usage example.
-2. Parameters of note (see CMP_KWARGS in `main.py`):
-    - *record_end_date* should be updated with the date that you want your QC to go through.
-        - 2025-04-30 was used for our sample output runs, the default is the current date.
-        - Any filenames that match a record, but go beyond the record_end_date, will be filtered out.
-    - *duplicate_root* should be updated with the desired root folder to move duplicate files to.
-    - *move_back* affects the movement of the duplicate files. It should be updated to False (move from their original location to the destination) or True (move from their destination back to their original location) based on the need.
-3. This step accomplishes the following:
-    - Compares id_dates in filenames to the records
-        - If the file is within the date range but there is no match, the script creates an excel file for review.
-    - Compares tech_ids to records
-        - Writes non-matches to an excel for review
-    - Checks for duplicate files
-    - Checks that 1 file exists for each id_date
-    - Verifies that filename and record locations match
-    - Writes destination paths for passed files
-4. Failure JSON files are generated and XLSX files containing information on id_date and tech_id record mismatches. 
-    - JSONs to check:
-        - flag_pipeline_flagged_no_records_example
-        - flag_pipeline_flagged_tester_id_mismatch_example
-        - flag_pipeline_flagged_tester_id_no_records_example
-        - flag_pipeline_extra_files
-        - flag_pipeline_duplicates
-        - flag_pipeline_location_mismatch
-    - XLSXs to check (only written if they are not empty):
-        - flagged/no_records_entry
-        - flagged/tester_id_mismatch
-        - flagged/tester_id_no_records
-5. Filename errors should then be resolved.
-6. The script can be rerun after corrections are made until failures are solved.
-
-#### Keyword Arguments for compare_sources_and_duplicates()
-| variable name | type(s) | description | default value | optional |
-|---|---|---|---|---|
-| record_end_date | datetime | Cut-off date to check. | The current date | Yes |
-| rc_tech_id_fieldname | str | Record tech id fieldname. | 'tester_id'| No |
-| rc_date_fieldname | str | Record date fieldname. | 'date_dc' | No |
-| records | str | Path to CSV or REDCap records in JSON format. | Output JSON from csv_records() | No |
-| ext | str | Filename extension to the output flag excel files.| 'example' | Yes |
-
 ### Move and Update
 1. See `main.move_and_update()`.
     - See [Move and Update the Clean Dataset](#move-and-update-the-clean-dataset) for a usage example.
@@ -259,8 +206,12 @@ if __name__ == '__main__':
 1. In [qc_pipelines.compare_sources_and_duplicates](qc_pipelines.py), update the `record_end_date` in `kwargs` to be your desired end date. For our tests, we used (2025, 4, 30).
 2. Run the following commands:
 ```python
-import main
-main.compare_sources_and_duplicates()
+import qc_pipelines as qcp
+
+if __name__ == '__main__':
+    CMP_KWARGS = {'flag_kwargs': {'record_end_date': qcp.date(2025, 4, 30)},
+        'duplicate_kwargs': {'duplicate_root': 'sample_data/duplicates'}}
+    qcp.compare_sources_and_duplicates(**CMP_KWARGS)
 ```
 - This will result in 6 files:
     - `flag_pipeline_passed`: Files that passed all checks.
@@ -276,6 +227,24 @@ main.compare_sources_and_duplicates()
         - Our sample data will flag BL01-04952_20250218.
     - `flag_pipelines_location_mismatch`: Filenames where the location did not match the location recorded in the records.
         - Our sample data will flag BL01-38126_20250108.
+- The specific steps used in this example include:
+    - Checking that the id_date exists in the record.
+    - Checking that the tester_id matches the one recorded in the record.
+    - Checking that no duplicate files exist.
+    - Checking that no extra files exist.
+    - Checking that the location in the filename matches the location recorded in the record.
+- If all of those checks pass, the we create a destination path for the file and add it to the dictionary. JSONs are written for the passed files as well as failures at each node in the pipeline.
+- Change `record_end_date` to the desired date for the QC to run through.
+    - Any filenames that go beyond the record_end_date will be filtered out.
+
+#### Keyword Arguments for compare_sources_and_duplicates()
+| variable name | type(s) | description | default value | optional |
+|---|---|---|---|---|
+| record_end_date | datetime | Cut-off date to check. | The current date | Yes |
+| rc_tech_id_fieldname | str | Record tech id fieldname. | 'tester_id'| No |
+| rc_date_fieldname | str | Record date fieldname. | 'date_dc' | No |
+| records | str | Path to CSV or REDCap records in JSON format. | Output JSON from csv_records() | No |
+| ext | str | Filename extension to the output flag excel files.| 'example' | Yes |
 
 ### Move and Update the Clean Dataset
 1. In [qc_pipelines.move_and_update](qc_pipelines.py), if `move_back` is False, it will move the source files to their destinations. If set to True, it will move them back from their intended destinations back to their original source location.
