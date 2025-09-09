@@ -92,7 +92,7 @@ def compare_sources_and_duplicates(**kwargs):
     records = read_dictionary_file(gld.get_filepath('csv_records_pipeline_csv_records'))
 
     flag_kwargs = {
-        'record_end_date': date(2025, 4, 30),
+        'record_end_date': date.today(),
         'rc_tester_id_fieldname': 'tester_id',
         'rc_date_fieldname': 'date_dc',
         'records': records,

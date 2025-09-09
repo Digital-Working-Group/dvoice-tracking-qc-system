@@ -273,7 +273,7 @@ This step walks over a predefined folder and outputs JSONs to describe files fou
 | variable name | type(s) | description | default value | optional |
 |---|---|---|---|---|
 | roots | list | Filepaths to crawl. | ["sample_data/"] | No |
-| ignore_list | list | Files or folders to ignore in walk. | [] | Yes |
+| ignore_list | list | Folders to ignore in walk. | [] | Yes |
 | keep_exts | tuple | File extensions to look for. | ('wav', 'm4a', 'mp3') | No |
 | pattern_list | list | Tuples of regex pattern and indices. | [example_pattern_data()](qc_scripts/utility/pattern.py) | Yes |
 | make_kv | func | Defines key-value pairs for walk data. | [match_filename_format()](qc_scripts/walk.py) | Yes |
@@ -343,9 +343,9 @@ If all of those checks pass, the we create a destination path for the file and a
 #### Keyword Arguments for move_and_update()
 | variable name | type(s) | description | default value | optional |
 |---|---|---|---|---|
-| src_dst_func | func | Get src and dst for move. | get_src_dst | Yes |
+| src_dst_func | func | Get src and dst for move. | [get_src_dst()](qc_scripts/destination.py) | Yes |
 | move_back | bool | Move from src to dst. It should be True to move back to the original location (dst to src). | False | Yes |
-| clean_dataset | str | Filepath to the current clean dataset | No default | No |
+| clean_dataset | str | Filepath to the current clean dataset | 'clean_dataset' key in the static.json | No |
 
 # Usage Example
 
