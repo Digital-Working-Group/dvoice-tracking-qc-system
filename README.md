@@ -1,6 +1,6 @@
 # Digital Voice Tracking and QC System
 
-This repository contains an outline to set up QC (quality control) pipelines and walks through an example QC run, where a schedule record of participant visits are compared against filenames of audio recordings of the participant visits.
+This repository contains an outline to set up QC (quality control) pipelines and walks through an example QC run, where a schedule record of participant visits is compared against filenames of audio recordings of the participant visits.
 
 | Table of Contents |
 |---|
@@ -33,7 +33,7 @@ Requirements for either Python version can be found in the respective requiremen
 pip install -r requirements/python3-9-6/requirements.txt ## Python 3.9.6 requirements
 pip install -r requirements/python3-13-1/requirements.txt ## Python 3.13.1 requirements
 ```
-## Requirement License Information
+## Requirements.txt License Information
 License information for each set of requirements.txt can be found in their respective `pip-licenses.md` file within the requirements/python[version] folders.
 
 ## Docker Support
