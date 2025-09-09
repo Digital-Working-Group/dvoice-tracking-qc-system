@@ -11,6 +11,21 @@ This repository contains an outline to set up QC (quality control) pipelines and
 | [Citations](#citations) |
 
 # Installation and Setup
+```
+requirements
+   |-- python3-13-1
+   |   |-- Dockerfile
+   |   |-- build_docker.sh
+   |   |-- pip-licenses.md
+   |   |-- requirements.txt
+   |   |-- run_docker.sh
+   |-- python3-9-6
+   |   |-- Dockerfile
+   |   |-- build_docker.sh
+   |   |-- pip-licenses.md
+   |   |-- requirements.txt
+   |   |-- run_docker.sh
+```
 ## Python Requirements
 These scripts were developed using Python versions 3.9.6 and 3.13.1. 
 Requirements for either Python version can be found in the respective requirements subfolders:
@@ -19,10 +34,10 @@ pip install -r requirements/python3-9-6/requirements.txt ## Python 3.9.6 require
 pip install -r requirements/python3-13-1/requirements.txt ## Python 3.13.1 requirements
 ```
 ## Requirement License Information
-License information for each set of requirements.txt can be found in their respective pip-licenses.md in the same folder.
+License information for each set of requirements.txt can be found in their respective pip-licenses.md within the requriements/python[version] folders.
 
 ## Docker Support
-Docker support can be found via the `Dockerfile` and `build_docker.sh` and `run_docker.sh` files.
+Docker support can be found via the `Dockerfile` and `build_docker.sh` and `run_docker.sh` files within the requriements/python[version] folders.
 
 ## Setup Template Files
 See [templates](templates/) for the template files you should copy. Copy each one into your root folder and rename by removing *_template* from the filename.
