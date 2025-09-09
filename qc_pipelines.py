@@ -106,10 +106,6 @@ def compare_sources_and_duplicates(**kwargs):
     }
     duplicate_kwargs.update(kwargs.get('duplicate_kwargs', {}))
 
-    move_kwargs = {
-        'move_back': False
-    }
-    move_kwargs.update(kwargs.get('move_kwargs', {}))
 
     (Pipeline('flag_pipeline')
         .update_state('walk_passed', gld.get_filepath('walk_pipeline_walk'))
@@ -122,10 +118,23 @@ def compare_sources_and_duplicates(**kwargs):
         .add_node(ActionNode(func=write_flagged_excel, input_keys=[f'flagged_tester_id_no_records_{flag_kwarg_ext}'],
                              **{'flag_type': 'tester_id_no_records', 'ext': flag_kwarg_ext}))
         .add_node(FilterNode(func=clean_duplicates, **duplicate_kwargs))
-        .add_node(ActionNode(func=move_files, input_keys=['duplicates'], **move_kwargs))
         .add_node(FilterNode(func=flag_file_count))
         .add_node(FilterNode(func=check_location, **{'records': records}))
         .add_node(FilterNode(func=get_dst))
+    ).run()
+
+def move_duplicates(**kwargs):
+    """
+    move duplicate files;
+    """
+    move_kwargs = {
+        'move_back': False
+    }
+    move_kwargs.update(kwargs.get('move_kwargs', {}))
+
+    (Pipeline('move_duplicates_pipeline')
+        .update_state('duplicates', gld.get_filepath('flag_pipeline_duplicates'))
+        .add_node(ActionNode(func=move_files, input_keys=['duplicates'], **move_kwargs))
     ).run()
 
 def move_and_update(**kwargs):
