@@ -99,26 +99,7 @@ if __name__ == '__main__':
     qcp.move_and_update(**MOVE_KWARGS)
 
 ```
-
-# QC Steps
-
-### Move and Update
-1. See `main.move_and_update()`.
-    - See [Move and Update the Clean Dataset](#move-and-update-the-clean-dataset) for a usage example.
-    - This step moves files to their final destinations and then updates the clean dataset with all of the files cleaned and moved. 
-    - If the kwarg *move_back* is False, it will move the source files to their destinations. If set to True, it will move them back from their intended destinations back to their original source location.
-2. After running the move, review the file generated. If the move was interrupted or looks incorrect, change *move_back* in the kwargs to True and rerun the script to move the files back to their original locations.
-3. Review the new clean dataset to verify that it looks correct. 
-
-#### Keyword Arguments for move_and_update()
-| variable name | type(s) | description | default value | optional |
-|---|---|---|---|---|
-| src_dst_func | func | Get src and dst for move. | [get_src_dst()](qc_scripts/destination.py) | Yes |
-| move_back | bool | Move from src to dst. It should be True to move back to the original location (dst to src). | False | Yes |
-| clean_dataset | str | Filepath to the current clean dataset | 'clean_dataset' key in the static.json | No |
-
 # Usage Example
-
 ## Sample Data
 The sample data provided to run the QC can be found in [sample_data](sample_data/). The recordings themselves are unrelated to the QC process.
 ```
@@ -143,12 +124,7 @@ The sample data provided to run the QC can be found in [sample_data](sample_data
 │   ├── BL01_38126_20250108_in-person.wav
 │   ├── DC02_61041_20250407_123_in-person.wav
 ```
-
 ## Sample QC Walkthrough
-Note that all resulting JSONs are referenced by their key in `static.json` as individual filenames will change.
-
-This example contains commands to run each step in an interactive python shell, but you may also run each step by running main.py and commenting/uncommenting each function call. 
-
 ### Read CSV Records
 ```python
 import qc_pipelines as qcp
@@ -169,7 +145,7 @@ if __name__ == '__main__':
 #### Keyword Arguments for csv_records()
 | variable name | type(s) | description | default value | optional |
 |---|---|---|---|---|
-| csv_filepath | str| Filepath to your records CSV. | sample_data/sample_csv_database.csv | No |
+| csv_filepath | str| Filepath to your records CSV. | sample_csv_database.csv | No |
 | required_fieldnames | list | Fields that require a value. | ['date_dc', 'data_loc'] | Yes |
 
 ### Walk Sample Data
@@ -229,7 +205,7 @@ if __name__ == '__main__':
     - Checking that no duplicate files exist.
     - Checking that no extra files exist.
     - Checking that the location in the filename matches the location recorded in the record.
-- If all of those checks pass, the we create a destination path for the file and add it to the dictionary. JSONs are written for the passed files as well as failures at each node in the pipeline.
+- If all checks pass, a destination path is created for the file and added it to the dictionary. JSONs are written for the passed files as well as failures at each node in the pipeline.
 - Change `record_end_date` to the desired date for the QC to run through.
     - Any filenames that go beyond the record_end_date will be filtered out.
 
@@ -243,17 +219,23 @@ if __name__ == '__main__':
 | ext | str | Filename extension to the output flag excel files.| 'example' | Yes |
 
 ### Move and Update the Clean Dataset
-1. In [qc_pipelines.move_and_update](qc_pipelines.py), if `move_back` is False, it will move the source files to their destinations. If set to True, it will move them back from their intended destinations back to their original source location.
-2. Run the following commands:
 ```python
-import main
-main.move_and_update()
+import qc_pipelines as qcp
+
+if __name__ == '__main__':
+    MOVE_KWARGS = {'move_kwargs': {'move_back': False}}
+    qcp.move_and_update(**MOVE_KWARGS)
 ```
- - This should move all passed files from the previous step into organized folders within `passed_data/`.
- - You may check and see that the clean dataset found in `passed_data/clean_dataset/` has also been updated with the moved data.
+ - This will move all passed files from the previous step into organized folders within the defined folder (`clean_root`) in `config.json` (default=`passed_data/clean_dataset`).
+
+#### Keyword Arguments for move_and_update()
+| variable name | type(s) | description | default value | optional |
+|---|---|---|---|---|
+| src_dst_func | func | Get src and dst for move. | [get_src_dst()](qc_scripts/destination.py) | Yes |
+| move_back | bool | Move from src to dst. It should be True to move back to the original location (dst to src). | False | Yes |
+| clean_dataset | str | Filepath to the current clean dataset | 'clean_dataset' key in the static.json | No |
 
 # Provenance and Logging
-
 This repository handles logging using a provenance schema, based loosely off of [RADIFOX](https://github.com/jh-mipc/radifox), which provides an example of provenance applied to imaging. You may edit the log contents by modifying the provenance dictionaries created in [logger.log_pipeline()](qc_scripts/logger.py) and [logger.log_node()](qc_scripts/logger.py).
 
 Our current implementation captures the following:
