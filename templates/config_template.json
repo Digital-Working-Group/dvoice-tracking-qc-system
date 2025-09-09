@@ -1,4 +1,4 @@
 {
-    "prov_root": "YOUR PROVENANCE FOLDER FILEPATH",
-    "clean_root": "YOUR CLEAN DATASET FOLDER FILEPATH"
+    "prov_root": "provenance/",
+    "clean_root": "passed_data/clean_dataset"
 }

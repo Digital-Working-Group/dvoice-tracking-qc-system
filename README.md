@@ -26,7 +26,7 @@ Docker support can be found via the `Dockerfile` and `build_docker.sh` and `run_
 See [templates](templates/) for the template files you should copy. Copy each one into your root folder and rename by removing *_template* from the filename.
 
 ### config.json
-`config.json` should be edited to contain the path to the root folder for the [provenance](Provenance-and-Logging) logs (`prov_root`) and the path to the root folder for the clean dataset (`clean_root`).
+`config.json` should be edited to contain the path to the desired root folder for the [provenance](Provenance-and-Logging) logs (`prov_root`) and the path to the desired root folder for the clean dataset (`clean_root`).
 ```json
 {
     "prov_root": "provenance/",
