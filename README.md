@@ -39,6 +39,18 @@ License information for each set of requirements.txt can be found in their respe
 ## Docker Support
 Docker support can be found via the `Dockerfile` and `build_docker.sh` and `run_docker.sh` files within the requirements/python[version] folders.
 
+### Docker Logging: Git Add Safe Directory
+The below command may need to be run while within the Docker environment to fully enable logging related to retrieving Git repository information.
+```sh
+git config --global --add safe.directory /scripts
+```
+Without running the above command in the Docker environment, users may see this warning and logging will be affected:
+```sh
+fatal: detected dubious ownership in repository at '/scripts'
+To add an exception for this directory, call:
+
+        git config --global --add safe.directory /scripts
+```
 ## Setup Template Files
 See [templates](templates/) for the template files you should copy. Copy each one into your root folder and rename by removing *_template* from the filename.
 
