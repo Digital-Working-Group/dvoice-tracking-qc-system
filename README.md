@@ -34,10 +34,10 @@ pip install -r requirements/python3-9-6/requirements.txt ## Python 3.9.6 require
 pip install -r requirements/python3-13-1/requirements.txt ## Python 3.13.1 requirements
 ```
 ## Requirement License Information
-License information for each set of requirements.txt can be found in their respective pip-licenses.md within the requriements/python[version] folders.
+License information for each set of requirements.txt can be found in their respective `pip-licenses.md` file within the requirements/python[version] folders.
 
 ## Docker Support
-Docker support can be found via the `Dockerfile` and `build_docker.sh` and `run_docker.sh` files within the requriements/python[version] folders.
+Docker support can be found via the `Dockerfile` and `build_docker.sh` and `run_docker.sh` files within the requirements/python[version] folders.
 
 ## Setup Template Files
 See [templates](templates/) for the template files you should copy. Copy each one into your root folder and rename by removing *_template* from the filename.
