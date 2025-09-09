@@ -18,8 +18,10 @@ Requirements for either Python version can be found in the respective requiremen
 pip install -r requirements/python3-9-6/requirements.txt ## Python 3.9.6 requirements
 pip install -r requirements/python3-13-1/requirements.txt ## Python 3.13.1 requirements
 ```
+## Requirement License Information
 License information for each set of requirements.txt can be found in their respective pip-licenses.md in the same folder.
 
+## Docker Support
 Docker support can be found via the `Dockerfile` and `build_docker.sh` and `run_docker.sh` files.
 
 ## Setup Template Files
@@ -212,7 +214,7 @@ if __name__ == '__main__':
 #### Keyword Arguments for move_duplicates()
 | variable name | type(s) | description | default value | optional |
 |---|---|---|---|---|
-| move_back | bool | Move from src to dst. It should be True to move back to the original location (dst to src). | False | Yes |
+| move_back | bool | Move from src to dst. If False, moves src to dst. If True, moves dst to src. | False | Yes |
 
 ### Move and Update the Clean Dataset
 ```python
@@ -228,7 +230,7 @@ if __name__ == '__main__':
 | variable name | type(s) | description | default value | optional |
 |---|---|---|---|---|
 | src_dst_func | func | Get src and dst for move. | [get_src_dst()](qc_scripts/destination.py) | Yes |
-| move_back | bool | Move from src to dst. It should be True to move back to the original location (dst to src). | False | Yes |
+| move_back | bool | Move from src to dst. If False, moves src to dst. If True, moves dst to src. | False | Yes |
 | clean_dataset | str | Filepath to the current clean dataset | 'clean_dataset' key in the static.json | No |
 
 # Repository Scripts
