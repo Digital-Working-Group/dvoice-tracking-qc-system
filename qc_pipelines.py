@@ -3,13 +3,12 @@ qc_pipelines.py
 Holds pipeline scripts for each step of the example QC
 """
 from datetime import date
-from read_token import read_token
 from qc_scripts.compare_records import flag_id_date, flag_tester_id, check_location
 from qc_scripts.clean_dataset import update_clean_dataset
 from qc_scripts.destination import get_dst, get_src_dst
 from qc_scripts.duplicates import clean_duplicates, flag_file_count
 from qc_scripts.move import move_files
-from qc_scripts.records import pull_redcap, read_csv_records, validate_records
+from qc_scripts.records import read_csv_records, validate_records
 from qc_scripts.stream import Pipeline, SourceNode, FilterNode, ActionNode
 from qc_scripts.utility import get_latest_data as gld
 from qc_scripts.utility.pattern import example_pattern_data
@@ -35,30 +34,6 @@ def csv_records(**kwargs):
     (Pipeline('csv_records_pipeline')
      .add_node(SourceNode(func=read_csv_records, **csv_kwargs))
      .add_node(FilterNode(func=validate_records, input_key='csv_records', **validate_kwargs))
-    ).run()
-
-def pull_comparison_sources():
-    """
-    Pulls and formats data from the example REDCap
-    Validates idtype and id and checks that required fields have been filled out.
-    """
-    rc_kwargs = {
-        'fields_list': ['record_id',
-                        'date_dc',
-                        'tester_id',
-                        'data_loc',
-                        'information_sheet_complete'],
-        'token': read_token,
-        'redcap_url': gld.get_root_fp('redcap_url')
-    }
-
-    validate_kwargs = {
-        'required_fieldnames': ['date_dc', 'data_loc']
-    }
-
-    (Pipeline('pull_sources_pipeline')
-     .add_node(SourceNode(func=pull_redcap, **rc_kwargs))
-     .add_node(FilterNode(func=validate_records, input_key='redcap_records', **validate_kwargs))
     ).run()
 
 def walk(**kwargs):
