@@ -240,7 +240,6 @@ Our example compares to the [records database CSV](sample_data/sample_csv_databa
 |---|---|---|---|---|
 | csv_filepath | str| Filepath to your records CSV. | sample_data/sample_csv_database.csv | No |
 | required_fieldnames | list | Fields that require a value. | ['date_dc', 'data_loc'] | Yes |
-| ext | str | filename extension. | "csv_records" | Yes |
 
 ### REDCap Project and API (Comparison Source: Option #2)
 To compare to REDCap instead, you will need to one slight changes to the predefined KWARGS:
@@ -275,10 +274,10 @@ This step walks over a predefined folder and outputs JSONs to describe files fou
 |---|---|---|---|---|
 | roots | list | Filepaths to crawl. | ["sample_data/"] | No |
 | ignore_list | list | Files or folders to ignore in walk. | [] | Yes |
-| keep_exts | tuple | File extensions to look for. | No default | No |
-| pattern_list | list | Tuples of regex pattern and indices. | None | Yes |
-| make_kv | func | Defines key-value pairs for walk data. | default_make_kv | Yes |
-| walk_kwargs | dict | Any additional walk kwargs. | {} | Yes |
+| keep_exts | tuple | File extensions to look for. | ('wav', 'm4a', 'mp3') | No |
+| pattern_list | list | Tuples of regex pattern and indices. | [example_pattern_data()](qc_scripts/utility/pattern.py) | Yes |
+| make_kv | func | Defines key-value pairs for walk data. | [match_filename_format()](qc_scripts/walk.py) | Yes |
+| walk_kwargs | dict | Any additional walk kwargs. | {'multiple_values': True, 'ext': 'walk'} | Yes |
 
 ### Compare Sources and Duplicates
 This step filters based on some example criteria to ensure that the filenames match the data recorded and that there are no extra or duplicate files.

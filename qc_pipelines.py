@@ -4,19 +4,18 @@ Holds pipeline scripts for each step of the example QC
 """
 from datetime import date
 from read_token import read_token
-from qc_scripts.utility.pattern import example_pattern_data
-from qc_scripts.walk import qc_walk
-from qc_scripts.stream import Pipeline, SourceNode, FilterNode, ActionNode
-from qc_scripts.records import pull_redcap, read_csv_records, validate_records
 from qc_scripts.compare_records import flag_id_date, flag_tester_id, check_location
-from qc_scripts.write_flagged_excel import write_flagged_excel
-from qc_scripts.duplicates import clean_duplicates, flag_file_count
-from qc_scripts.destination import get_dst, get_src_dst
-from qc_scripts.move import move_files
 from qc_scripts.clean_dataset import update_clean_dataset
-from qc_scripts.utility.read import read_dictionary_file
+from qc_scripts.destination import get_dst, get_src_dst
+from qc_scripts.duplicates import clean_duplicates, flag_file_count
+from qc_scripts.move import move_files
+from qc_scripts.records import pull_redcap, read_csv_records, validate_records
+from qc_scripts.stream import Pipeline, SourceNode, FilterNode, ActionNode
 from qc_scripts.utility import get_latest_data as gld
-from qc_scripts.walk import match_filename_format
+from qc_scripts.utility.pattern import example_pattern_data
+from qc_scripts.utility.read import read_dictionary_file
+from qc_scripts.walk import match_filename_format, qc_walk
+from qc_scripts.write_flagged_excel import write_flagged_excel
 
 def csv_records(**kwargs):
     """
