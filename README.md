@@ -199,6 +199,21 @@ if __name__ == '__main__':
 | records | str | Path to CSV or REDCap records in JSON format. | Output JSON from csv_records() | No |
 | ext | str | Filename extension to the output flag excel files.| 'example' | Yes |
 
+### Move Duplicate Files
+```python
+import qc_pipelines as qcp
+
+if __name__ == '__main__':
+    MOVE_KWARGS = {'move_kwargs': {'move_back': False}}
+    qcp.move_duplicates(**MOVE_KWARGS)
+```
+ - This will move all duplicate files identified in compare_sources_and_duplicates() (`flag_pipeline_duplicates` key in static.json) to the defined root for duplicate files.
+
+#### Keyword Arguments for move_duplicates()
+| variable name | type(s) | description | default value | optional |
+|---|---|---|---|---|
+| move_back | bool | Move from src to dst. It should be True to move back to the original location (dst to src). | False | Yes |
+
 ### Move and Update the Clean Dataset
 ```python
 import qc_pipelines as qcp
