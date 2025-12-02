@@ -15,7 +15,7 @@ class Pipeline:
         self.name = name
         self.nodes = []
         self.logger = logger
-        self.all_failures = [] ## key it by the extention
+        self.all_failures = [] ## key it by the extension
         self.state = {}
         self.ignore_log = kwargs.get('ignore_log', [])
         self.pipeline_input = {}
@@ -56,11 +56,12 @@ class Pipeline:
 
 class Node:
     """ Elements that make up a pipeline """
-    def __init__(self, func, input_key="passed", **kwargs):
+    def __init__(self, func, input_key="passed", write_output_func=None, **kwargs):
         self.func = func
         self.name = func.__name__
         self.input_key = input_key
         self.kwargs = kwargs
+        self.write_output_func = write_output_func
         self.start_time = None
         self.end_time = None
     
@@ -83,8 +84,14 @@ class Node:
                 key = result['ext']
                 value = result['final']
                 state_updates[key] = value
+        if self.write_output_func is not None:
+            self.write_output(input_data, state_updates)
         self.end_time = datetime.now()
         return state_updates
+    
+    def write_output(self, input_data, state_updates):
+        write_output_kw = self.kwargs.get('write_output_kw', {})
+        self.write_output_func(input_data, state_updates, self.name, **write_output_kw)
     
 class SourceNode(Node):
     """
