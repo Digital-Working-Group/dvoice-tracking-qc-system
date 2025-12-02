@@ -97,6 +97,33 @@ if __name__ == '__main__':
     qcp.move_and_update(**MOVE_KWARGS)
 
 ```
+
+## read_token.py
+`read_token.py` is only necessary if using REDCap. The `token_loc` variable should contain the filepath to a text file that has a single line containing your [REDCap API token](#redcap-api-access).
+
+```py
+"""
+read_token_template.py
+read_token.py is not version controlled because it contains the path to your REDCap token.
+"""
+
+def read_token():
+    """
+    get token
+    """
+    token_loc = "some_folder/token/token.txt"
+    with open(token_loc, 'r') as infile:
+        for line in infile:
+            return line.strip()
+    print("Key not found")
+    return None
+```
+
+The token text file should look like the below, where TOKEN_VALUE is replaced by the REDCap API token:
+```txt
+TOKEN_VALUE
+```
+
 # Usage Example
 ## Sample Data
 The sample data provided to run the QC can be found in the [sample_data/](sample_data/) folder.
@@ -135,28 +162,89 @@ The CSV is structured to be similar to the export from a REDCap project with onl
 
 For an example, see [sample_csv_database.csv](sample_csv_database.csv).
 
-### Read CSV Records
+### REDCap Setup
+1. Select **New Project**.
+2. For the **Project creation option** select *Upload a REDCap project XML file (CDISC ODM format)*. If you would like to use our structure but create your own sample data, use [ProjectStructureExample.REDCAP.xml](redcap_example/ProjectStructureExample.REDCap.xml) or upload with our sample data using [ProjectStructure_with_data.xml](redcap_example/ProjectStructure_with_data.xml).
+3. Click **Create Project**.
+
+### REDCap API Access
+To gain API access, you'll need to request a token. To do so:
+1. Open your REDCap project.
+2. Select **User Rights** from the side menu.
+3. Select your usr and click **Edit user privileges**.
+4. Check the boxes **API Export** and **API Import/Update** and save changes.
+5. Click **API** from the side menu.
+6. Click **Request API token**. You will recieve an email when your REDCap administrator has approved your request.
+7. Once approved, return to **API** from the side menu and you will now see your token. Copy that token and put it in a text file.
+8. In `read_token.py`, assign `token_loc` to be the path to the text file holding your REDCap token.
+
+### Pull Records
+Depending on how you specify your `source`, the `pull_records` pipeline will read and validate records from a specified REDCap Project (`source='redcap'`) or a CSV file (`source='csv'`). By default, the source will be 'csv'. For the demo, please 
+
+#### Pull Records: Source from CSV
 ```python
 import qc_pipelines as qcp
 
 if __name__ == '__main__':
-    CSV_RECORDS_KW = {'csv_kwargs': {'csv_filepath': 'sample_csv_database.csv'}}
-    qcp.csv_records(**CSV_RECORDS_KW)
+    PULL_RECORDS_KW = {'csv_kwargs': {'csv_filepath': 'sample_csv_database.csv'}}
+    qcp.csv_records(**PULL_RECORDS_KW)
 ```
-- This will result in two files:
-    - `csv_records_pipeline_csv_records`: All records read from the CSV.
-    - `csv_records_pipeline_fix_record`: Records that need to be reviewed and corrected.
+- This will result in three files:
+    - `records_pipeline_csv_records`: All records read from the CSV.
+    - `records_pipeline_validated_records`: All records read from the CSV that passed the validation check.
+    - `records_pipeline_fix_record`: Records that need to be reviewed and corrected.
     - Our sample data result in the flagging of:
         - missing_fields: BL00-13234_20241217, DC02-12432_20241123
         - invalid_id: DC265
 - Change `csv_filepath` to the proper filepath to your records CSV.
     - This example compares to the [records database CSV](sample_csv_database.csv).
 
-#### Keyword Arguments for csv_records()
+#### Pull Records: Source from REDCap
+```python
+import qc_pipelines as qcp
+from read_token import read_token
+
+if __name__ == '__main__':
+    PULL_RECORDS_KW = rc_kwargs = {'fields_list': ['record_id',
+                                                    'date_dc',
+                                                    'tester_id',
+                                                    'data_loc',
+                                                    'information_sheet_complete'],
+                                    'token': read_token,
+                                    'redcap_url': gld.get_root_fp('redcap_url')}
+    qcp.csv_records(**PULL_RECORDS_KW)
+```
+- This will result in three files:
+    - `records_pipeline_redcap_records`: All records read from REDCap.
+    - `records_pipeline_validated_records`: All records read from REDCap that passed the validation check.
+    - `records_pipeline_fix_record`: Records that need to be reviewed and corrected.
+    - Our sample data result in the flagging of:
+        - missing_fields: DC02-12432_20241123
+        - invalid_id: DC265
+- Change `read_token` to read the text file that stores your REDCap token.
+    - You may modify [templates/read_token_template.py](templates/read_token_template.py).
+
+#### Keyword Arguments for pull_records()
+
+**read_csv_records**
 | variable name | type(s) | description | default value | optional |
 |---|---|---|---|---|
 | csv_filepath | str| Filepath to your records CSV. | sample_csv_database.csv | No |
 | required_fieldnames | list | Fields that require a value. | ['date_dc', 'data_loc'] | Yes |
+
+**pull_redcap**
+| variable name | type(s) | description | default value | optional |
+|---|---|---|---|---|
+| fields_list | list | Fields to pull from REDCap. | [] | No |
+| token | func | Method that gets token. | No default | No |
+| redcap_url | str| REDCap API URL for your project. | No | No |
+| ext | str | Resulting JSON filename extension. | 'redcap_records' | Yes |
+
+**validate_kwargs**
+| variable name | type(s) | description | default value | optional |
+|---|---|---|---|---|
+| required_fieldnames | list | Flag entry if these fields are blank. | [] | No |
+| ext | str | Resulting JSON Filename extension. | 'validated_records' | No |
 
 ### Walk Sample Data
 ```python
@@ -184,7 +272,9 @@ if __name__ == '__main__':
 | keep_exts | tuple | File extensions to look for. | ('wav', 'm4a', 'mp3') | No |
 | pattern_list | list | Tuples of regex pattern and indices. | [example_pattern_data()](qc_scripts/utility/pattern.py) | Yes |
 | make_kv | func | Defines key-value pairs for walk data. | [match_filename_format()](qc_scripts/walk.py) | Yes |
-| walk_kwargs | dict | Any additional walk kwargs. | {'multiple_values': True, 'ext': 'walk'} | Yes |
+| make_kv_kw | dict | Any additional kwargs for a custom make_kv function. | {} | Yes |
+| ext | str | Resulting JSON filename extension. | 'walk' | Yes |
+| multiple_values | bool | Allow multiple values per key. | True | Yes |
 
 ### Compare Sources and Duplicates
 ```python
@@ -198,10 +288,10 @@ if __name__ == '__main__':
 - This will result in 6 files:
     - `flag_pipeline_passed`: Files that passed all checks.
     - `flag_pipeline_flagged_no_records_example`: Filename id_date did not match those found in the records.
-        - Also see `flagged/no_records_entry` for an Excel summary.
+        - Also see `flagged/flag_id_date_flagged_no_records_example` for an Excel summary.
         - Our sample data will flag DC02-58910_20250101, DS02-61041_20250407, DC02-61041_20250507 and BL01-06800_20251015.
     - `flag_pipeline_flagged_tester_id_mismatch_example`: Filenames where the tester_id did not match those found in the records.
-        - Also see `flagged/tester_id_mismatch` for an Excel summary.
+        - Also see `flagged/flag_tester_id_flagged_tester_id_mismatch_example` for an Excel summary.
         - Our sample data will flag BL01-06800_20250220.
     - `flag_pipeline_duplicates`: Files with same id_date and same contents.
         - Our sample data will flag BL01-04952_20250218.
@@ -220,13 +310,29 @@ if __name__ == '__main__':
     - Any filenames that go beyond the record_end_date will be filtered out.
 
 #### Keyword Arguments for compare_sources_and_duplicates()
+
+**flag_id_date** and **flag_tester_id**
 | variable name | type(s) | description | default value | optional |
 |---|---|---|---|---|
 | record_end_date | datetime | Cut-off date to check. | The current date | Yes |
 | rc_tech_id_fieldname | str | Record tech id fieldname. | 'tester_id'| No |
 | rc_date_fieldname | str | Record date fieldname. | 'date_dc' | No |
 | records | str | Path to CSV or REDCap records in JSON format. | Output JSON from csv_records() | No |
+| ignore_flagged | list | List of files that will be flagged but have been resolved. | [] | Yes |
 | ext | str | Filename extension to the output flag excel files.| 'example' | Yes |
+
+**clean_duplicates**
+| variable name | type(s) | description | default value | optional |
+|---|---|---|---|---|
+| duplicate_root | string | Path to the folder for duplicate files. | ''| Yes |
+| compare_hash | bool | File hashes are compared. | True | Yes |
+| compare_duration | bool | File durations are compared. | True | Yes |
+
+**check_location**
+**clean_duplicates**
+| variable name | type(s) | description | default value | optional |
+|---|---|---|---|---|
+| records | dict | Dictionary holding record data. | records as defined the data associated with 'records_pipeline_validated_records' | Yes |
 
 ### Move Duplicate Files
 ```python
@@ -241,7 +347,11 @@ if __name__ == '__main__':
 #### Keyword Arguments for move_duplicates()
 | variable name | type(s) | description | default value | optional |
 |---|---|---|---|---|
+| src_dst_func | func | Get src and dst for move. | [get_src_dst()](qc_scripts/destination.py) | Yes |
 | move_back | bool | Move from src to dst. If False, moves src to dst. If True, moves dst to src. | False | Yes |
+| read_data_file | func | Function to read the input_data if it is not already in dictionary form. | lambda d: d | Yes |
+| ext | str | Filename extension to the output flag excel files.| 'move' | Yes |
+| multiple_values | bool | Allow multiple values per key. | True | Yes |
 
 ### Move and Update the Clean Dataset
 ```python
@@ -254,10 +364,17 @@ if __name__ == '__main__':
  - This will move all passed files from the previous step into organized folders within the defined folder (`clean_root`) in `config.json` (default=`passed_data/clean_dataset`).
 
 #### Keyword Arguments for move_and_update()
+**move_files**
 | variable name | type(s) | description | default value | optional |
 |---|---|---|---|---|
 | src_dst_func | func | Get src and dst for move. | [get_src_dst()](qc_scripts/destination.py) | Yes |
 | move_back | bool | Move from src to dst. If False, moves src to dst. If True, moves dst to src. | False | Yes |
+| read_data_file | func | Function to read the input_data if it is not already in dictionary form. | lambda d: d | Yes |
+| ext | str | Filename extension to the output flag excel files.| 'move' | Yes |
+| multiple_values | bool | Allow multiple values per key. | True | Yes |
+**update_clean_dataset**
+| variable name | type(s) | description | default value | optional |
+|---|---|---|---|---|
 | clean_dataset | str | Filepath to the current clean dataset | 'clean_dataset' key in the static.json | No |
 
 # Repository Scripts
