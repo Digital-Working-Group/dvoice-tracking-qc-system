@@ -6,11 +6,23 @@ import os
 import re
 from tqdm import tqdm
 
-def dst_filename(filepath):
+def standardize_filename(match_groups, ext):
     """
-    Makes sure that the filename is in the correct format
+    Standardizes the filename for the destination based on the information
+    extracted from the source filename.
     """
-    pattern = re.compile(r'([A-Za-z]{2}\d{1,2})_(\d{4,5})_(\d{8})_(\d{3,4})_(remote|in-person)', flags=re.IGNORECASE)
+    id_type = match_groups[0].upper() + match_groups[1].zfill(2)
+    pid = match_groups[2].zfill(5)
+    date = match_groups[3]
+    tech_id = match_groups[4]
+    location = match_groups[5].lower()
+    return f'{id_type}_{pid}_{date}_{tech_id}_{location}{ext}'
+
+def dst_filename(filepath, filename_prefix=None):
+    """
+    Makes sure that the filename is in the correct format 
+    """
+    pattern = re.compile(r'([A-Za-z]{2})(\d{1,2})_(\d{4,5})_(\d{8})_(\d{3,4})_(remote|in-person)', flags=re.IGNORECASE)
     dir_path, filename = os.path.split(filepath)
     name, ext = os.path.splitext(filename)
 
@@ -19,7 +31,9 @@ def dst_filename(filepath):
         raise ValueError("Filename does not contain the expected pattern")
 
     groups = match.groups()
-    corrected_name = f'Example_audio_{"_".join(groups)}{ext}'
+    corrected_name = standardize_filename(groups, ext)
+    if filename_prefix is not None:
+        corrected_name = f'{filename_prefix}_{corrected_name}'
     return os.path.join(dir_path, corrected_name)
 
 def dst_helper(data):
