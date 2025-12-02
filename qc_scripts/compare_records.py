@@ -18,7 +18,7 @@ def flag_id_date(input_data, **kwargs):
     ext = kwargs.get('ext', '')
     rc_tester_id_fieldname = kwargs.get('rc_tester_id_fieldname')
     rc_date_fieldname = kwargs.get('rc_date_fieldname')
-    ignore_flagged = kwargs.get('ignore_flagged_rc', [])
+    ignore_flagged = kwargs.get('ignore_flagged', [])
 
 
     ## Allows for input to be either a filepath or a dictionary of data
@@ -71,7 +71,7 @@ def flag_tester_id(input_data, **kwargs):
     records = kwargs.get('records')
     ext = kwargs.get('ext', '')
     rc_tester_id_fieldname = kwargs.get('rc_tester_id_fieldname')
-    ignore_flagged = kwargs.get('ignore_flagged_tester', [])
+    ignore_flagged = kwargs.get('ignore_flagged', [])
 
     if isinstance(input_data, str):
         input_data = read_dictionary_file(input_data)
