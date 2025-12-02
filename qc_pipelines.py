@@ -8,34 +8,57 @@ from qc_scripts.clean_dataset import update_clean_dataset
 from qc_scripts.destination import get_dst, get_src_dst
 from qc_scripts.duplicates import clean_duplicates, flag_file_count
 from qc_scripts.move import move_files
-from qc_scripts.records import read_csv_records, validate_records
+from qc_scripts.records import pull_redcap, read_csv_records, validate_records
 from qc_scripts.stream import Pipeline, SourceNode, FilterNode, ActionNode
 from qc_scripts.utility import get_latest_data as gld
 from qc_scripts.utility.pattern import example_pattern_data
 from qc_scripts.utility.read import read_dictionary_file
 from qc_scripts.walk import match_filename_format, qc_walk
-from qc_scripts.write_flagged_excel import write_flagged_excel
+from qc_scripts.write_flagged_excel import output_flagged_xlsx
+from read_token import read_token
 
-def csv_records(**kwargs):
+def pull_records(source='csv', **kwargs):
     """
     Reads in a CSV in that contains the same fields as the example REDCap
     Validates idtype and id and checks that required fields have been filled out.
     """
+    # source = kwargs.get('source', 'csv')  ## 'csv' or 'redcap'
+
     csv_kwargs = {
-        'csv_filepath': 'sample_data/sample_csv_database.csv'}
+        'csv_filepath': 'sample_csv_database.csv'}
     csv_kwargs.update(kwargs.get('csv_kwargs', {}))
+
+    rc_kwargs = {
+        'fields_list': ['record_id',
+                        'date_dc',
+                        'tester_id',
+                        'data_loc',
+                        'information_sheet_complete'],
+        'token': read_token,
+        'redcap_url': gld.get_root_fp('redcap_url')
+    }
 
     validate_kwargs = {
         'required_fieldnames': ['date_dc', 'data_loc'],
-        'ext': 'csv_records'
+        'ext': 'validated_records'
     }
     validate_kwargs.update(kwargs.get('validate_kwargs', {}))
 
-    (Pipeline('csv_records_pipeline')
-     .add_node(SourceNode(func=read_csv_records, **csv_kwargs))
-     .add_node(FilterNode(func=validate_records, input_key='csv_records', **validate_kwargs))
-    ).run()
+    if source.lower() == 'redcap':
+        (Pipeline('records_pipeline')
+        .add_node(SourceNode(func=pull_redcap, **rc_kwargs))
+        .add_node(FilterNode(func=validate_records, input_key='redcap_records', **validate_kwargs))
+        ).run()
 
+    elif source.lower() == 'csv':
+        (Pipeline('records_pipeline')
+         .add_node(SourceNode(func=read_csv_records, **csv_kwargs))
+         .add_node(FilterNode(func=validate_records, input_key='csv_records', **validate_kwargs))
+        ).run()
+
+    else:
+        raise ValueError("source must be either 'csv' or 'redcap'")
+    
 def walk(**kwargs):
     """
     Walks files in given root and separates by passed, pattern mismatch, and wrong extension
@@ -46,7 +69,8 @@ def walk(**kwargs):
         'keep_exts': ('wav', 'm4a', 'mp3'),
         'pattern_list': example_pattern_data(),
         'make_kv': match_filename_format,
-        'walk_kwargs': {'multiple_values': True, 'ext': 'walk'}
+        'multiple_values': True,
+        'ext': 'walk'
     }
     walk_kwargs.update(kwargs.get('walk_kwargs', {}))
 
@@ -64,7 +88,7 @@ def compare_sources_and_duplicates(**kwargs):
         - Compares location to records
         - Writes file destination path
     """
-    records = read_dictionary_file(gld.get_filepath('csv_records_pipeline_csv_records'))
+    records = read_dictionary_file(gld.get_filepath('records_pipeline_validated_records'))
 
     flag_kwargs = {
         'record_end_date': date.today(),
@@ -84,14 +108,8 @@ def compare_sources_and_duplicates(**kwargs):
 
     (Pipeline('flag_pipeline')
         .update_state('walk_passed', gld.get_filepath('walk_pipeline_walk'))
-        .add_node(FilterNode(func=flag_id_date, input_key='walk_passed', **flag_kwargs))
-        .add_node(ActionNode(func=write_flagged_excel, input_keys=[f'flagged_no_records_{flag_kwarg_ext}'],
-                             **{'flag_type': 'no_records_entry', 'ext': flag_kwarg_ext}))
-        .add_node(FilterNode(func=flag_tester_id, **flag_kwargs))
-        .add_node(ActionNode(func=write_flagged_excel, input_keys=[f'flagged_tester_id_mismatch_{flag_kwarg_ext}'],
-                             **{'flag_type': 'tester_id_mismatch', 'ext': flag_kwarg_ext}))
-        .add_node(ActionNode(func=write_flagged_excel, input_keys=[f'flagged_tester_id_no_records_{flag_kwarg_ext}'],
-                             **{'flag_type': 'tester_id_no_records', 'ext': flag_kwarg_ext}))
+        .add_node(FilterNode(func=flag_id_date, input_key='walk_passed', write_output_func=output_flagged_xlsx,**flag_kwargs))
+        .add_node(FilterNode(func=flag_tester_id, write_output_func=output_flagged_xlsx, **flag_kwargs))
         .add_node(FilterNode(func=clean_duplicates, **duplicate_kwargs))
         .add_node(FilterNode(func=flag_file_count))
         .add_node(FilterNode(func=check_location, **{'records': records}))
@@ -103,6 +121,7 @@ def move_duplicates(**kwargs):
     move duplicate files;
     """
     move_kwargs = {
+        'src_dst_func': get_src_dst,
         'move_back': False
     }
     move_kwargs.update(kwargs.get('move_kwargs', {}))
