@@ -23,6 +23,8 @@ def validate_idtype_and_id(idtype, _id):
     validate idtype and id string
     """
     idtype, _id = validate_idtype(idtype), validate_id(_id.zfill(5))
+    if idtype is None or _id is None:
+        return None
     return f"{idtype}-{_id}"
 
 def validate_idtype(idtype):
@@ -34,6 +36,8 @@ def validate_idtype(idtype):
     if match:
         letters, digits = match.groups()
         digits = digits.zfill(2)
+        if digits == '00':
+            return None
         return letters.upper() + digits
     raise AssertionError(f"invalid idtype of {idtype}")
 
@@ -52,18 +56,22 @@ def validate_id(_id, remove_non_digits=True):
 
 def redcap_to_pid(redcap_id):
     """
-    EDIT THIS LATER -- ambiguous. need to decide on a set of potential IDtypes
+    Convert to padded id and idtype. Do not allow the ID type to be '00
     """
 
     match = re.fullmatch(r'^([A-Za-z]{2}\d{1,2})(\d{5})$', redcap_id)
     if match:
         id_type, _id = match.groups()
-        return validate_idtype_and_id(id_type, _id)
+        result = validate_idtype_and_id(id_type, _id)
+        if result is not None:
+            return result
 
     # Try 4-digit ID
     match = re.fullmatch(r'^([A-Za-z]{2}\d{1,2})(\d{4})$', redcap_id)
     if match:
         id_type, _id = match.groups()
-        return validate_idtype_and_id(id_type, _id)
+        result = validate_idtype_and_id(id_type, _id)
+        if result is not None:
+            return result
 
     return None
