@@ -306,7 +306,7 @@ if __name__ == '__main__':
 
 #### Keyword Arguments for compare_sources_and_duplicates()
 
-**flag_id_date** and **flag_tester_id**
+##### **flag_id_date** and **flag_tester_id**
 | variable name | type(s) | description | default value | optional |
 |---|---|---|---|---|
 | record_end_date | datetime | Cut-off date to check. | The current date | Yes |
@@ -316,14 +316,14 @@ if __name__ == '__main__':
 | ignore_flagged | list | List of files that will be flagged but have been resolved. | [] | Yes |
 | ext | str | Filename extension to the output flag excel files.| 'example' | Yes |
 
-**clean_duplicates**
+##### **clean_duplicates**
 | variable name | type(s) | description | default value | optional |
 |---|---|---|---|---|
 | duplicate_root | string | Path to the folder for duplicate files. | ''| Yes |
 | compare_hash | bool | File hashes are compared. | True | Yes |
 | compare_duration | bool | File durations are compared. | True | Yes |
 
-**check_location**
+##### **check_location**
 | variable name | type(s) | description | default value | optional |
 |---|---|---|---|---|
 | records | dict | Dictionary holding record data. | records as defined the data associated with 'records_pipeline_validated_records' | Yes |
