@@ -46,7 +46,7 @@ def update_clean_dataset(input_data, **kwargs):
 
         ## read clean_dataset
         updated_clean = read_dictionary_file(clean_dataset)
-    
+
     ## Clean dataset doesn't exist yet
     else:
         updated_clean = defaultdict(list)
@@ -54,7 +54,7 @@ def update_clean_dataset(input_data, **kwargs):
         clean_dataset = f'{clean_root}/clean_dataset.json'
         Path(clean_dataset).parent.mkdir(parents=True, exist_ok=True)
 
-    ## add new data to the clean dataset 
+    ## add new data to the clean dataset
     for id_date, data in tqdm(input_data.items()):
         if id_date not in updated_clean:
             updated_clean[id_date] = data
@@ -64,9 +64,9 @@ def update_clean_dataset(input_data, **kwargs):
             else:
                 updated_clean[id_date].extend(data)
                 updated_clean[id_date]= deduplicate_by_src(updated_clean[id_date])
-    
+
     ## Write over old clean dataset
     with open(clean_dataset, 'w', encoding='utf-8') as f:
         json.dump(updated_clean, f, indent=4)
     print(f'See {clean_dataset} for updated clean dataset.')
-    edit_static_json('static.json', clean_dataset, f"clean_dataset")
+    edit_static_json('static.json', clean_dataset, "clean_dataset")

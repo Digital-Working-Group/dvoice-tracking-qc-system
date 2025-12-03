@@ -3,8 +3,8 @@ records.py
 methods involving pulling, reading, or validating data from a REDCap or csv of records
 """
 import csv
-import requests
 from collections import defaultdict
+import requests
 from qc_scripts.utility.read import read_dictionary_file
 from qc_scripts.utility.id_validation import redcap_to_pid
 
@@ -16,7 +16,7 @@ def read_csv_records(**kwargs):
     ext = kwargs.get('ext', 'csv_records')
     data = []
 
-    with open(csv_filepath, 'r', newline='') as csvfile:
+    with open(csv_filepath, 'r', newline='', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
             data.append(row)
@@ -73,7 +73,7 @@ def validate_records(input_data, **kwargs):
     if isinstance(input_data, str):
         input_data = read_dictionary_file(input_data)
 
-    records = defaultdict(lambda: defaultdict(str)) 
+    records = defaultdict(lambda: defaultdict(str))
     invalid_id = []
     missing_fields = []
 

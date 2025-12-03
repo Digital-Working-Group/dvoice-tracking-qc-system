@@ -2,11 +2,10 @@
 move.py: move functions for files
 """
 import os
+from collections import defaultdict
+from tqdm import tqdm
 import qc_scripts.utility.move_commands as mf
 from qc_scripts.utility.read import read_dictionary_file
-from qc_scripts.utility.yield_data import yield_data
-from collections import defaultdict
-from tqdm import tqdm 
 
 def get_src_dst(data, move_back, **_):
     """
@@ -40,11 +39,6 @@ def move_files(input_data, **kwargs):
 
     src_dst_func = kwargs.get('src_dst_func', get_src_dst)
     move_function = mf.windows_move if os.sep == "\\" else mf.linux_move
-    # move_kwargs = {'get_src_dst': src_dst_func,
-    #     'move_function': move_function,
-    #     'make_kv': mf.kv_status_src_dst_exist, 'read_data_file': read_data_file, 'ext': ext}
-    
-    # result = mf.move_data(input_data, **move_kwargs)
     final = {} if not multiple_values else defaultdict(list)
 
     for key, value in tqdm(read_data_file(input_data).items()):

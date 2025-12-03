@@ -24,14 +24,14 @@ def flag_id_date(input_data, **kwargs):
     ## Allows for input to be either a filepath or a dictionary of data
     if isinstance(input_data, str):
         input_data = read_dictionary_file(input_data)
-    
+
     if isinstance(records, str):
         records = read_dictionary_file(records)
 
     record_id_dates = list(records.keys())
     flagged_no_record = {}
     passed = {}
-        
+
     # checks our dvrs to see if they have a record
     for id_date, data in tqdm(input_data.items()):
         ## get file date
@@ -42,24 +42,24 @@ def flag_id_date(input_data, **kwargs):
                 passed[id_date] = data
                 continue
             nearest = []
-            for idd in record_id_dates:
-                if data[0]['pid'] in idd:
-                    for i in data:
-                        try:
-                            idd_date = datetime.strptime(idd.split('_')[-1], "%Y%m%d").date()
-                            difference = abs((idd_date - date_of_file).days)
-                        except ValueError:
-                            difference = 'Error'
-                        ra = records[idd][rc_tester_id_fieldname]
-                        date = records[idd][rc_date_fieldname].replace('-', '')
-                        nearest.append({'id_date': idd, 'date': date, 'difference': difference, 'tester_id_completing': ra})
-                        i['nearest'] = nearest
+            for idd in (idd for idd in record_id_dates if data[0]['pid'] in idd):
+                for i in data:
+                    try:
+                        idd_date = datetime.strptime(idd.split('_')[-1], "%Y%m%d").date()
+                        difference = abs((idd_date - date_of_file).days)
+                    except ValueError:
+                        difference = 'Error'
+                    ra = records[idd][rc_tester_id_fieldname]
+                    date = records[idd][rc_date_fieldname].replace('-', '')
+                    nearest.append({'id_date': idd, 'date': date, 'difference': difference,
+                                    'tester_id_completing': ra})
+                    i['nearest'] = nearest
 
             flagged_no_record[id_date] = data
         else:
             if date_of_file <= record_end_date:
                 passed[id_date] = data
-                
+
     return [{'final': passed, "ext": "passed"},
             {'final': flagged_no_record, "ext": f"flagged_no_records_{ext}"}]
 
@@ -75,10 +75,10 @@ def flag_tester_id(input_data, **kwargs):
 
     if isinstance(input_data, str):
         input_data = read_dictionary_file(input_data)
-    
+
     if isinstance(records, str):
         records = read_dictionary_file(records)
-    
+
     flagged_tester_id_mismatch = defaultdict(list)
     id_date_not_found = defaultdict(list)
     passed = defaultdict(list)
@@ -90,7 +90,7 @@ def flag_tester_id(input_data, **kwargs):
             rc_tester_id = records[id_date][rc_tester_id_fieldname]
         except KeyError:
             print(f'{id_date} not found in {rc_tester_id_fieldname}')
-            id_date_not_found[id_date] = (data)
+            id_date_not_found[id_date] = data
         else:
             for item in data:
                 if item['tester_id'] != rc_tester_id:
@@ -112,21 +112,22 @@ def check_location(input_data, **kwargs):
     records = kwargs.get('records')
     if isinstance(records, str):
         records = read_dictionary_file(records)
-        
+
     match = defaultdict(list)
     location_mismatch = defaultdict(list)
-    
+
     for id_date, data in tqdm(input_data.items()):
         location = records[id_date]['data_loc']
         for entry in data:
             entry['location'] = entry['location'].lower()
-            if location == '0' or location == 'remote':
+            if location in ('0', 'remote'):
                 entry['record_location'] = 'remote'
-            elif location == '1' or location == 'in-person':
+            elif location in ('1', 'in-person'):
                 entry['record_location'] = 'in-person'
             else:
                 entry['record_location'] = 'undefined'
-            if entry['record_location'] != entry['location'] or entry['record_location'] == 'undefined':
+            if (entry['record_location'] != entry['location'] or
+                entry['record_location'] == 'undefined'):
                 location_mismatch[id_date].append(entry)
             else:
                 match[id_date].append(entry)

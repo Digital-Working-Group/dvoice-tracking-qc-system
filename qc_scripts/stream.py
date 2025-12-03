@@ -22,7 +22,7 @@ class Pipeline:
         self.init_context = self._get_init_context()
         self.start_time = None
         self.end_time = None
-    
+
     def _get_init_context(self, skip=2):
         """Gets where the pipeline was initialized"""
         stack = inspect.stack()
@@ -42,7 +42,7 @@ class Pipeline:
         """Add a node to the pipeline."""
         self.nodes.append(node)
         return self
-    
+
     def run(self):
         """Run the pipeline by passing data through each node sequentially."""
         self.start_time = datetime.now()
@@ -64,7 +64,7 @@ class Node:
         self.write_output_func = write_output_func
         self.start_time = None
         self.end_time = None
-    
+
     def execute_func(self, input_data):
         """Override this in subclasses to customize."""
         return self.func(input_data, **self.kwargs)
@@ -77,7 +77,7 @@ class Node:
         self.start_time = datetime.now()
         input_data = state.get(self.input_key, None)
         results = self.execute_func(input_data)
-        
+
         state_updates = defaultdict(lambda: defaultdict)
         if isinstance(results, list):
             for result in results:
@@ -88,11 +88,12 @@ class Node:
             self.write_output(input_data, state_updates)
         self.end_time = datetime.now()
         return state_updates
-    
+
     def write_output(self, input_data, state_updates):
+        """Add another output function to create summaries of failed files"""
         write_output_kw = self.kwargs.get('write_output_kw', {})
         self.write_output_func(input_data, state_updates, self.name, **write_output_kw)
-    
+
 class SourceNode(Node):
     """
     Subclass of Node that allows for creating initial data for a pipeline
@@ -100,13 +101,12 @@ class SourceNode(Node):
     def execute_func(self, _):
         """Overriding Node execute_func"""
         return self.func(**self.kwargs)
-    
+
 class FilterNode(Node):
     """
     Subclass of Node that allows for applying filters to a dataset
     -- currently not in use, but leaving in case we want to re-implemet it
     """
-    pass
 
 class MergeNode(Node):
     """
@@ -115,7 +115,7 @@ class MergeNode(Node):
     """
     def __init__(self, func, input_keys, **kwargs):
         super().__init__(func, input_key=None, **kwargs)
-        self.input_keys = input_keys 
+        self.input_keys = input_keys
 
     def process(self, state):
         self.start_time = datetime.now()
@@ -129,7 +129,7 @@ class MergeNode(Node):
             state_updates[key] = value
         self.end_time = datetime.now()
         return state_updates
-    
+
 class ActionNode(Node):
     """
     This will perform some action function on a list of Nodes (not intended to filter)

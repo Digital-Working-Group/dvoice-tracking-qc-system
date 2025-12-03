@@ -11,7 +11,7 @@ from qc_scripts.utility.errors import on_error
 def default_make_kv(__, data, **_):
     """
     default kv for walk
-    """ 
+    """
     return data[0], {}
 
 def match_filename_format(_, data, **kwargs):
@@ -37,7 +37,6 @@ def match_filename_format(_, data, **kwargs):
         return id_date, value
     except ValueError:
         return None, ('invalid_date', full_path)
-    
 
 def match_pattern_data(string, pattern_data):
     """
@@ -94,12 +93,12 @@ def qc_walk(**kwargs):
 
     return [{'final': final, 'ext': ext}, {'final': other, 'ext': f'other_{ext}'}]
 
-def full_file_gen(root, onerror=on_error, topdown=True, ignore_list=[]):
+def full_file_gen(root, onerror=on_error, topdown=True, ignore_list=None):
     """
     Walks a directory and yields the full file paths.
     """
     for dirpath, dirnames, filenames in os.walk(root, onerror=onerror, topdown=topdown):
-        if ignore_list != []:
+        if ignore_list is not None:
             dirnames[:] = [directory for directory in dirnames if directory.split(os.sep)[-1]\
                     not in ignore_list]
         for file in filenames:

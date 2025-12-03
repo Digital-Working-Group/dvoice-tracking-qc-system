@@ -98,7 +98,6 @@ def compare_sources_and_duplicates(**kwargs):
         'ext': 'example'
     }
     flag_kwargs.update(kwargs.get('flag_kwargs', {}))
-    flag_kwarg_ext = flag_kwargs.get('ext', 'example')
 
     duplicate_kwargs = {
         'duplicate_root': 'sample_data/duplicates/'

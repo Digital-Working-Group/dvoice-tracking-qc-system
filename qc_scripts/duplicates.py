@@ -3,10 +3,10 @@ duplicates.py
 Methods for dealing with duplicate data
 """
 import os
-import filecmp 
-from tqdm import tqdm
+import filecmp
 import hashlib
 from collections import defaultdict
+from tqdm import tqdm
 import soundfile as sf
 
 def flag_file_count(input_data, **kwargs):

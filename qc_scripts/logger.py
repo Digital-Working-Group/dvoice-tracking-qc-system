@@ -13,34 +13,34 @@ from qc_scripts.utility.edit_string import append_to_end
 from qc_scripts.utility.log_helper import truncate_max_length, len_dict_list_values
 
 def edit_static_json(static_path, log_path, ext):
-        """
-        Helper function for save log's static json rewriting
-        Reads in provided json and adds specified key:path to it before overwriting.
-        """
-        static = read_dictionary_file(static_path)
-        static[ext] = log_path
-        with open(static_path, 'w', encoding="utf-8") as fp:
-            json.dump(static, fp, indent=4)
+    """
+    Helper function for save log's static json rewriting
+    Reads in provided json and adds specified key:path to it before overwriting.
+    """
+    static = read_dictionary_file(static_path)
+    static[ext] = log_path
+    with open(static_path, 'w', encoding="utf-8") as fp:
+        json.dump(static, fp, indent=4)
 
 def custom_serializer(obj):
     """
     Serializer: objects replaces by their name for logging
     """
     if isinstance(obj, types.FunctionType):
-        return obj.__name__  
+        return obj.__name__
     return str(obj)
 
 class Logger:
     """
     Handles logging QC step results to JSON files.
     """
-    
+
     def __init__(self, base_dir="save_log", static_path="static.json"):
         # Ensure log directory exists
         os.makedirs(base_dir, exist_ok=True)
         self.base_dir = base_dir
         self.static_path = static_path
-    
+
     def save_to_json(self, pipeline_obj):
         """
         Handles the saving of states to json files
@@ -50,7 +50,6 @@ class Logger:
         result = pipeline_obj.state
         ignore_log = pipeline_obj.ignore_log
         start_time = pipeline_obj.start_time
-
 
         timestamp = start_time.strftime("%Y%m%d_%H%M%S")
         save_path = os.path.join(self.base_dir, pipeline_name, timestamp)
@@ -68,10 +67,11 @@ class Logger:
             if size != 0:
                 nested_size = len_dict_list_values(data)
             if nested_size is None:
-                filename = os.path.join(save_path, f"{pipeline_name}_({size})_{timestamp}_{ext}.json")
+                filename = os.path.join(save_path,
+                                        f"{pipeline_name}_({size})_{timestamp}_{ext}.json")
             else:
-                filename = os.path.join(save_path, f"{pipeline_name}_({size})_[{nested_size}]_{timestamp}_{ext}.json")
-
+                filename = os.path.join(save_path,
+                                        f"{pipeline_name}_({size})_[{nested_size}]_{timestamp}_{ext}.json")
 
             # Save data to JSON file
             with open(filename, "w", encoding="utf-8") as f:
@@ -81,7 +81,7 @@ class Logger:
             files.append(filename)
             edit_static_json(self.static_path, filename, f"{pipeline_name}_{ext}")
 
-        return files 
+        return files
 
     def log_pipeline(self, pipeline_obj, **kwargs):
         """
@@ -101,13 +101,13 @@ class Logger:
                         'pipeline_input': truncate_max_length(pipeline_obj.pipeline_input),
                         'nodes': []
         }
-        ## Get commit hash and github path 
+        ## Get commit hash and github path
         prov_data.update(get_pipeline_origin_path())
 
         ## Get node info
         for node in pipeline_obj.nodes:
             prov_data['nodes'].append(self.log_node(node))
-        
+
         ## Save to provenance JSON file
         today = datetime.now()
         year_month = today.strftime('%Y%m')

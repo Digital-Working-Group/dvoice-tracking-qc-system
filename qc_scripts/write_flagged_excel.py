@@ -32,7 +32,7 @@ def flattened_to_df(input_data):
     flat_data = {}
 
     for key, val in data_dict.items():
-         flat_data[key] = flatten(val)
+        flat_data[key] = flatten(val)
 
     return pd.DataFrame.from_dict(flat_data, orient='index')
 
@@ -49,15 +49,17 @@ def autofit_column_width(writer, sheetname, df, extra_space=2, startcol=0):
             )) + extra_space  # adding a little extra space
         worksheet.set_column(idx+startcol, idx+startcol, max_len)
 
-def output_flagged_xlsx(__, state_updates, func_name, ignore_write=[]):
+def output_flagged_xlsx(__, state_updates, func_name, ignore_write=None):
     """
     Helper for writing flagged files to an excel 
     to be passed as a write_output_func to a node
     """
     state_additions = copy.deepcopy(state_updates)
-    ignore_write.append('passed')
+    ignore_list = ['passed']
+    if ignore_write is not None:
+        ignore_list.extend(ignore_write)
     for key, value in state_additions.items():
-        if key in ignore_write:
+        if key in ignore_list:
             continue
         write_flagged_excel(value, f"{func_name}_{key}", key)
 
