@@ -15,7 +15,22 @@ from qc_scripts.utility.pattern import example_pattern_data
 from qc_scripts.utility.read import read_dictionary_file
 from qc_scripts.walk import match_filename_format, qc_walk
 from qc_scripts.write_flagged_excel import output_flagged_xlsx
-from read_token import read_token
+
+def get_rc_kwargs():
+    """
+    get REDCap keyword arguments, if source='redcap'
+    """
+    from read_token import read_token
+    rc_kwargs = {
+        'fields_list': ['record_id',
+                        'date_dc',
+                        'tester_id',
+                        'data_loc',
+                        'information_sheet_complete'],
+        'token': read_token,
+        'redcap_url': gld.get_root_fp('redcap_url')
+    }
+    return rc_kwargs
 
 def pull_records(source='csv', **kwargs):
     """
@@ -28,16 +43,6 @@ def pull_records(source='csv', **kwargs):
         'csv_filepath': 'sample_csv_database.csv'}
     csv_kwargs.update(kwargs.get('csv_kwargs', {}))
 
-    rc_kwargs = {
-        'fields_list': ['record_id',
-                        'date_dc',
-                        'tester_id',
-                        'data_loc',
-                        'information_sheet_complete'],
-        'token': read_token,
-        'redcap_url': gld.get_root_fp('redcap_url')
-    }
-
     validate_kwargs = {
         'required_fieldnames': ['date_dc', 'data_loc'],
         'ext': 'validated_records'
@@ -45,6 +50,7 @@ def pull_records(source='csv', **kwargs):
     validate_kwargs.update(kwargs.get('validate_kwargs', {}))
 
     if source.lower() == 'redcap':
+        rc_kwargs = get_rc_kwargs()
         (Pipeline('records_pipeline')
         .add_node(SourceNode(func=pull_redcap, **rc_kwargs))
         .add_node(FilterNode(func=validate_records, input_key='redcap_records', **validate_kwargs))
