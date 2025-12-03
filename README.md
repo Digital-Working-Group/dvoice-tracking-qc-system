@@ -81,7 +81,7 @@ import qc_pipelines as qcp
 
 if __name__ == '__main__':
     CSV_RECORDS_KW = {'csv_kwargs': {'csv_filepath': 'sample_csv_database.csv'}}
-    qcp.csv_records(**CSV_RECORDS_KW)
+    qcp.pull_records(source='csv', **CSV_RECORDS_KW)
 
     WALK_KWARGS = {'walk_kwargs': {'roots': ["sample_data/"]}}
     qcp.walk(**WALK_KWARGS)
@@ -98,8 +98,8 @@ if __name__ == '__main__':
 
 ```
 
-## read_token.py
-`read_token.py` is only necessary if using REDCap. The `token_loc` variable should contain the filepath to a text file that has a single line containing your [REDCap API token](#redcap-api-access).
+### read_token.py
+`read_token.py` is only necessary if using REDCap. The `token_loc` variable should contain the filepath to a text file of a single string containing your [REDCap API token](#redcap-api-access).
 
 ```py
 """
@@ -117,11 +117,6 @@ def read_token():
             return line.strip()
     print("Key not found")
     return None
-```
-
-The token text file should look like the below, where TOKEN_VALUE is replaced by the REDCap API token:
-```txt
-TOKEN_VALUE
 ```
 
 # Usage Example
@@ -164,7 +159,7 @@ For an example, see [sample_csv_database.csv](sample_csv_database.csv).
 
 ### REDCap Setup
 1. Select **New Project**.
-2. For the **Project creation option** select *Upload a REDCap project XML file (CDISC ODM format)*. If you would like to use our structure but create your own sample data, use [ProjectStructureExample.REDCAP.xml](redcap_example/ProjectStructureExample.REDCap.xml) or upload with our sample data using [ProjectStructure_with_data.xml](redcap_example/ProjectStructure_with_data.xml).
+2. For the **Project creation option** select *Upload a REDCap project XML file (CDISC ODM format)*. If you would like to use our structure but create your own sample data, use [ProjectStructureExample.REDCAP.xml](templates/ProjectStructureExample.REDCap.xml) or upload with our sample data using [ProjectStructure_with_data.xml](templates/ProjectStructure_with_data.xml).
 3. Click **Create Project**.
 
 ### REDCap API Access
@@ -179,7 +174,7 @@ To gain API access, you'll need to request a token. To do so:
 8. In `read_token.py`, assign `token_loc` to be the path to the text file holding your REDCap token.
 
 ### Pull Records
-Depending on how you specify your `source`, the `pull_records` pipeline will read and validate records from a specified REDCap Project (`source='redcap'`) or a CSV file (`source='csv'`). By default, the source will be 'csv'. For the demo, please 
+Depending on how you specify your `source`, the `pull_records` pipeline will read and validate records from a specified REDCap Project (`source='redcap'`) or a CSV file (`source='csv'`). By default, the source will be 'csv'.
 
 #### Pull Records: Source from CSV
 ```python
@@ -329,7 +324,6 @@ if __name__ == '__main__':
 | compare_duration | bool | File durations are compared. | True | Yes |
 
 **check_location**
-**clean_duplicates**
 | variable name | type(s) | description | default value | optional |
 |---|---|---|---|---|
 | records | dict | Dictionary holding record data. | records as defined the data associated with 'records_pipeline_validated_records' | Yes |
