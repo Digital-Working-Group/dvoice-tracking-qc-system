@@ -11,6 +11,7 @@
 | pytz               | 2025.2      | MIT License                                       |
 | requests           | 2.32.4      | Apache Software License                           |
 | six                | 1.17.0      | MIT License                                       |
+| soundfile          | 0.13.1      | BSD License                                       |
 | tqdm               | 4.67.1      | MIT License; Mozilla Public License 2.0 (MPL 2.0) |
 | tzdata             | 2025.2      | Apache Software License                           |
 | urllib3            | 2.4.0       | UNKNOWN                                           |
