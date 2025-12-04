@@ -117,7 +117,7 @@ def compare_sources_and_duplicates(**kwargs):
         .add_node(FilterNode(func=flag_tester_id, write_output_func=output_flagged_xlsx, **flag_kwargs))
         .add_node(FilterNode(func=clean_duplicates, **duplicate_kwargs))
         .add_node(FilterNode(func=flag_file_count))
-        .add_node(FilterNode(func=check_location, **{'records': records}))
+        .add_node(FilterNode(func=check_location, **{'records': flag_kwargs['records']}))
         .add_node(FilterNode(func=get_dst))
     ).run()
 
