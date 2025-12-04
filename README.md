@@ -184,12 +184,11 @@ if __name__ == '__main__':
 | variable name | type(s) | description | default value | optional |
 |---|---|---|---|---|
 | csv_filepath | str| Filepath to your records CSV. | sample_csv_database.csv | No |
-| required_fieldnames | list | Fields that require a value. | ['date_dc', 'data_loc'] | Yes |
 
 **validate_kwargs**
 | variable name | type(s) | description | default value | optional |
 |---|---|---|---|---|
-| required_fieldnames | list | Flag entry if these fields are blank. | [] | No |
+| required_fieldnames | list | Fields that require a value. | ['date_dc', 'data_loc'] | Yes |
 | ext | str | Resulting JSON Filename extension. | 'validated_records' | No |
 
 ### Walk Sample Data
@@ -261,9 +260,9 @@ if __name__ == '__main__':
 | variable name | type(s) | description | default value | optional |
 |---|---|---|---|---|
 | record_end_date | datetime | Cut-off date to check. | The current date | Yes |
-| rc_tech_id_fieldname | str | Record tech id fieldname. | 'tester_id'| No |
+| rc_tester_id_fieldname | str | Record tester id fieldname. | 'tester_id'| No |
 | rc_date_fieldname | str | Record date fieldname. | 'date_dc' | No |
-| records | str | Path to CSV or REDCap records in JSON format. | Output JSON from csv_records() | No |
+| records | str | Path to CSV or REDCap records in JSON format. | Output JSON from 'records_pipeline_validated_records' | No |
 | ignore_flagged | list | List of files that will be flagged but have been resolved. | [] | Yes |
 | ext | str | Filename extension to the output flag excel files.| 'example' | Yes |
 
@@ -273,11 +272,6 @@ if __name__ == '__main__':
 | duplicate_root | string | Path to the folder for duplicate files. | ''| Yes |
 | compare_hash | bool | File hashes are compared. | True | Yes |
 | compare_duration | bool | File durations are compared. | True | Yes |
-
-**check_location**
-| variable name | type(s) | description | default value | optional |
-|---|---|---|---|---|
-| records | dict | Dictionary holding record data. | records as defined the data associated with 'records_pipeline_validated_records' | Yes |
 
 ### Move Duplicate Files
 ```python
@@ -317,6 +311,7 @@ if __name__ == '__main__':
 | read_data_file | func | Function to read the input_data if it is not already in dictionary form. | lambda d: d | Yes |
 | ext | str | Filename extension to the output flag excel files.| 'move' | Yes |
 | multiple_values | bool | Allow multiple values per key. | True | Yes |
+
 **update_clean_dataset**
 | variable name | type(s) | description | default value | optional |
 |---|---|---|---|---|
