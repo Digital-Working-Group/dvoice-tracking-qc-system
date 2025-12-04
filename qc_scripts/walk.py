@@ -102,4 +102,7 @@ def full_file_gen(root, onerror=on_error, topdown=True, ignore_list=None):
             dirnames[:] = [directory for directory in dirnames if directory.split(os.sep)[-1]\
                     not in ignore_list]
         for file in filenames:
-            yield os.path.join(dirpath, file).replace(os.sep, os.altsep)
+            full_path = os.path.join(dirpath, file)
+            if os.altsep is not None:
+                full_path = full_path.replace(os.sep, os.altsep)
+            yield full_path
