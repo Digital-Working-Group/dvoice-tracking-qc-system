@@ -40,7 +40,7 @@ def move_files(input_data, **kwargs):
         ext += '_move_back'
 
     src_dst_func = kwargs.get('src_dst_func', get_src_dst)
-    move_function = mf.windows_move if os.sep == "\\" else mf.linux_move
+    move_function = mf.shutil_move if os.sep == "\\" else mf.linux_move
     final = {} if not multiple_values else defaultdict(list)
 
     for key, value in tqdm(read_data_file(input_data).items()):
