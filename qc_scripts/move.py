@@ -34,6 +34,8 @@ def move_files(input_data, **kwargs):
     if isinstance(input_data, str):
         input_data = read_dictionary_file(input_data)
 
+    print(f'The input data has the following keys: {input_data.keys()}')
+
     if move_back:
         ext += '_move_back'
 

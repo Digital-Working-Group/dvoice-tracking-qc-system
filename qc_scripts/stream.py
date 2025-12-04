@@ -149,6 +149,7 @@ class ActionNode(Node):
         """
         self.start_time = datetime.now()
         state_updates = defaultdict(lambda: defaultdict)
+        print(f'input keys len: {len(self.input_keys)}')
         for input_key in self.input_keys:
             input_data = state.get(input_key, None)
             if input_data is None or len(input_data) == 0:
