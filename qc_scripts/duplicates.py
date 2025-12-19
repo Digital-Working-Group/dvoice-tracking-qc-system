@@ -78,7 +78,7 @@ def clean_duplicates(input_data, **kwargs):
     """
     duplicate_root = kwargs.get('duplicate_root', '')
     compare_hash = kwargs.get('compare_hash', True)
-    compare_duration = kwargs.get('compare_duration', False)
+    compare_duration = kwargs.get('compare_duration', True)
 
     duplicates_output = defaultdict(list)
 
