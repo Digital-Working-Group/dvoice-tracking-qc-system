@@ -173,8 +173,8 @@ if __name__ == '__main__':
     - `records_pipeline_validated_records`: All records read from the CSV that passed the validation check.
     - `records_pipeline_fix_record`: Records that need to be reviewed and corrected.
     - Our sample data result in the flagging of:
-        - missing_fields: BL00-13234_20241217, DC02-12432_20241123
-        - invalid_id: DC265
+        - missing_fields: DC02-12432_20241123
+        - invalid_id: BL0013234, DC265
 - Change `csv_filepath` to the proper filepath to your records CSV.
     - This example compares to the [records database CSV](sample_csv_database.csv).
 

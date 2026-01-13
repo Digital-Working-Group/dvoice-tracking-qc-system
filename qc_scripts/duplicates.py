@@ -60,7 +60,7 @@ def are_duplicates(file1, file2, hash=False, duration=False, shallow=True):
     if hash is True:
         result = result and (file_hash(file1_path) == file_hash(file2_path))
     if duration is True:
-        result = result and (get_duration(file1_path) != get_duration(file2_path))
+        result = result and (get_duration(file1_path) == get_duration(file2_path))
     return result
 
 def check_file_extension(file1, file2):
